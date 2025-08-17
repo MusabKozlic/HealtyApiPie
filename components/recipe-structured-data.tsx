@@ -27,23 +27,19 @@ export function RecipeStructuredData({ recipe }: RecipeStructuredDataProps) {
       .filter(Boolean)
       .join(", "),
     recipeIngredient: recipe.ingredients,
-    recipeInstructions: recipe.instructions
-      .split("\n")
-      .filter((step) => step.trim())
-      .map((step, index) => ({
-        "@type": "HowToStep",
-        position: index + 1,
-        text: step.trim(),
-      })),
+    recipeInstructions: recipe.instructions.map((step: string, index: number) => ({
+      "@type": "HowToStep",
+      text: step.replace(/^Step \d+:\s*/, ""), // remove "Step 1:" prefix if exists
+    })),
     nutrition: recipe.nutrition
       ? {
-          "@type": "NutritionInformation",
-          calories: recipe.calories ? `${recipe.calories} calories` : undefined,
-          proteinContent: recipe.nutrition.protein || undefined,
-          carbohydrateContent: recipe.nutrition.carbs || undefined,
-          fatContent: recipe.nutrition.fat || undefined,
-          fiberContent: recipe.nutrition.fiber || undefined,
-        }
+        "@type": "NutritionInformation",
+        calories: recipe.calories ? `${recipe.calories} calories` : undefined,
+        proteinContent: recipe.nutrition.protein || undefined,
+        carbohydrateContent: recipe.nutrition.carbs || undefined,
+        fatContent: recipe.nutrition.fat || undefined,
+        fiberContent: recipe.nutrition.fiber || undefined,
+      }
       : undefined,
     aggregateRating: {
       "@type": "AggregateRating",

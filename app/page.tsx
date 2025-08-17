@@ -28,6 +28,7 @@ export const metadata: Metadata = {
 }
 
 export default function HomePage() {
+  
   return (
     <>
       <script
@@ -69,7 +70,7 @@ export default function HomePage() {
               {/* Hero Section */}
               <div className="text-center mb-12">
                 <h1 className="font-serif text-4xl md:text-6xl font-bold text-gray-900 mb-4">
-                  Healthy Recipe Generator
+                  {}
                 </h1>
                 <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-8">
                   Transform your ingredients into nutritious, delicious meals with AI-powered recipe generation

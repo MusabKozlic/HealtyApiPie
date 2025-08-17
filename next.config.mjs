@@ -9,6 +9,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  logging: {
+    level: 'debug'
+  }
 }
 
 export default nextConfig

@@ -10,7 +10,7 @@ export type Recipe = {
   title: string
   description: string | null
   ingredients: string[]
-  instructions: string
+  instructions: string[]
   calories: number | null
   nutrition: Record<string, any> | null
   category: string | null

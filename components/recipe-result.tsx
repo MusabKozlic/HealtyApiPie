@@ -81,24 +81,31 @@ export function RecipeResult({ recipe }: RecipeResultProps) {
         {/* Ingredients */}
         <div>
           <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-900">Ingredients</h3>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
+          <ul className="grid grid-cols-1 lg:grid-cols-2 gap-2">
             {recipe.ingredients.map((ingredient, index) => (
-              <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0 mt-2" />
-                <span className="text-gray-700 text-sm sm:text-base leading-relaxed">{ingredient}</span>
-              </div>
+              <li
+                key={index}
+                className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition"
+              >
+                <input type="checkbox" className="w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500" />
+                <span className="text-gray-800 text-sm sm:text-base leading-relaxed">{ingredient}</span>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
+
 
         {/* Instructions */}
         <div>
           <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-900">Instructions</h3>
-          <div className="prose prose-gray max-w-none">
-            <div className="whitespace-pre-line text-gray-700 leading-relaxed text-sm sm:text-base bg-gray-50 p-4 rounded-lg">
-              {recipe.instructions}
-            </div>
-          </div>
+          <ol className="space-y-3">
+            {recipe.instructions.map((step, index) => (
+              <li key={index} className="flex gap-3 p-3 bg-gray-50 rounded-lg">
+                <span className="font-medium text-green-600">{index + 1}.</span>
+                <span className="text-gray-700">{step.replace(/^Step \d+:\s*/, "")}</span>
+              </li>
+            ))}
+          </ol>
         </div>
 
         {/* Nutrition Info */}
