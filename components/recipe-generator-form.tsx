@@ -4,7 +4,9 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
-import { Loader2, Sparkles } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
+import { Loader2, Sparkles, Users, Clock } from "lucide-react"
 import { RecipeResult } from "@/components/recipe-result"
 import type { Recipe } from "@/lib/supabase/client"
 
@@ -38,6 +40,8 @@ export function RecipeGeneratorForm() {
   const [ingredients, setIngredients] = useState("")
   const [selectedDietary, setSelectedDietary] = useState<string[]>([])
   const [selectedCuisine, setSelectedCuisine] = useState("")
+  const [servings, setServings] = useState("")
+  const [cookingTime, setCookingTime] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedRecipe, setGeneratedRecipe] = useState<Recipe | null>(null)
   const [error, setError] = useState("")
@@ -46,9 +50,15 @@ export function RecipeGeneratorForm() {
     setSelectedDietary((prev) => (prev.includes(option) ? prev.filter((item) => item !== option) : [...prev, option]))
   }
 
+  const hasValidInput = () => {
+    return ingredients.trim() || selectedDietary.length > 0 || selectedCuisine || servings.trim() || cookingTime.trim()
+  }
+
   const handleGenerate = async () => {
-    if (!ingredients.trim()) {
-      setError("Please enter some ingredients")
+    if (!hasValidInput()) {
+      setError(
+        "Please enter at least one parameter (ingredients, dietary preference, cuisine, servings, or cooking time)",
+      )
       return
     }
 
@@ -60,15 +70,19 @@ export function RecipeGeneratorForm() {
       const category = selectedDietary.length > 0 ? selectedDietary.join(", ") : "general"
       const cuisine = selectedCuisine || "any"
 
+      // Build ingredients string - if empty, use dietary/cuisine for random generation
+      const ingredientsText = ingredients.trim() || `${category} ${cuisine} meal`
+
       const response = await fetch("/api/generate-recipe", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          ingredients: ingredients.trim(),
+          ingredients: ingredientsText,
           category: `${category}, ${cuisine} cuisine`,
-          language: "en", // Hardcoded to English
+          servings: servings ? Number.parseInt(servings) : undefined,
+          cookingTime: cookingTime ? Number.parseInt(cookingTime) : undefined,
         }),
       })
 
@@ -108,35 +122,73 @@ export function RecipeGeneratorForm() {
           {/* Ingredients Input */}
           <div className="space-y-2">
             <label htmlFor="ingredients" className="text-sm font-medium text-gray-700">
-              Available Ingredients *
+              Available Ingredients (Optional)
             </label>
             <Textarea
               id="ingredients"
-              placeholder="e.g., chicken breast, broccoli, rice, garlic, olive oil..."
+              placeholder="e.g., chicken breast, broccoli, rice, garlic, olive oil... (Leave empty for random recipe)"
               value={ingredients}
               onChange={(e) => setIngredients(e.target.value)}
               className="min-h-[100px] resize-none"
             />
-            <p className="text-xs text-gray-500">List the ingredients you have available, separated by commas</p>
+            <p className="text-xs text-gray-500">
+              List specific ingredients you have. Recipe will use ONLY these ingredients plus seasonings. Leave empty
+              for random generation.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label htmlFor="servings" className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                <Users className="h-4 w-4" />
+                Number of Servings (Optional)
+              </label>
+              <Input
+                id="servings"
+                type="number"
+                min="1"
+                max="12"
+                placeholder="e.g., 4"
+                value={servings}
+                onChange={(e) => setServings(e.target.value)}
+                className="w-full"
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="cookingTime" className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                <Clock className="h-4 w-4" />
+                Cooking Time (Optional)
+              </label>
+              <Input
+                id="cookingTime"
+                type="number"
+                min="5"
+                max="180"
+                placeholder="e.g., 30 minutes"
+                value={cookingTime}
+                onChange={(e) => setCookingTime(e.target.value)}
+                className="w-full"
+              />
+            </div>
           </div>
 
           {/* Dietary Preferences */}
           <div className="space-y-3">
-            <label className="text-sm font-medium text-gray-700">Dietary Preferences</label>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
+            <label className="text-sm font-medium text-gray-700">Dietary Preferences (Optional)</label>
+            <div className="flex flex-wrap gap-2">
               {DIETARY_OPTIONS.map((option) => (
-                <button
+                <Badge
                   key={option}
-                  type="button"
-                  onClick={() => toggleDietary(option)}
-                  className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                  variant={selectedDietary.includes(option) ? "default" : "outline"}
+                  className={`cursor-pointer px-3 py-2 text-sm transition-colors ${
                     selectedDietary.includes(option)
-                      ? "bg-green-600 text-white border-green-600"
-                      : "bg-white text-gray-700 border-gray-300 hover:border-green-300 hover:bg-green-50"
+                      ? "bg-green-600 hover:bg-green-700 text-white"
+                      : "hover:bg-green-50 hover:border-green-300"
                   }`}
+                  onClick={() => toggleDietary(option)}
                 >
                   {option.charAt(0).toUpperCase() + option.slice(1).replace("-", " ")}
-                </button>
+                </Badge>
               ))}
             </div>
           </div>
@@ -144,20 +196,20 @@ export function RecipeGeneratorForm() {
           {/* Cuisine Type */}
           <div className="space-y-3">
             <label className="text-sm font-medium text-gray-700">Cuisine Type (Optional)</label>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
+            <div className="flex flex-wrap gap-2">
               {CUISINE_OPTIONS.map((cuisine) => (
-                <button
+                <Badge
                   key={cuisine}
-                  type="button"
-                  onClick={() => setSelectedCuisine(selectedCuisine === cuisine ? "" : cuisine)}
-                  className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                  variant={selectedCuisine === cuisine ? "default" : "outline"}
+                  className={`cursor-pointer px-3 py-2 text-sm transition-colors ${
                     selectedCuisine === cuisine
-                      ? "bg-blue-600 text-white border-blue-600"
-                      : "bg-white text-gray-700 border-gray-300 hover:border-blue-300 hover:bg-blue-50"
+                      ? "bg-blue-600 hover:bg-blue-700 text-white"
+                      : "hover:bg-blue-50 hover:border-blue-300"
                   }`}
+                  onClick={() => setSelectedCuisine(selectedCuisine === cuisine ? "" : cuisine)}
                 >
                   {cuisine.charAt(0).toUpperCase() + cuisine.slice(1).replace("-", " ")}
-                </button>
+                </Badge>
               ))}
             </div>
           </div>
@@ -165,8 +217,8 @@ export function RecipeGeneratorForm() {
           {/* Generate Button */}
           <Button
             onClick={handleGenerate}
-            disabled={isGenerating || !ingredients.trim()}
-            className="w-full bg-green-600 hover:bg-green-700 text-white py-6 text-lg font-medium"
+            disabled={isGenerating || !hasValidInput()}
+            className="w-full bg-green-600 hover:bg-green-700 text-white py-6 text-lg font-medium disabled:opacity-50"
           >
             {isGenerating ? (
               <>
@@ -180,6 +232,10 @@ export function RecipeGeneratorForm() {
               </>
             )}
           </Button>
+
+          <p className="text-xs text-gray-500 text-center">
+            At least one parameter is required to generate a recipe. Leave ingredients empty for random healthy meals.
+          </p>
 
           {/* Error Message */}
           {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">{error}</div>}

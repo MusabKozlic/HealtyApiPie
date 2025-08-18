@@ -1,16 +1,13 @@
 "use client"
 
-import { useUser } from "@/lib/mock-auth"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Sparkles, BookOpen, Clock, Users, Flame, LogIn } from "lucide-react"
+import { Sparkles, BookOpen, Clock, Users, Flame } from "lucide-react"
 import Link from "next/link"
 
 export default function HomePage() {
-  const { user, isLoading, login } = useUser()
-
   return (
     <>
       <script
@@ -33,7 +30,6 @@ export default function HomePage() {
             featureList: [
               "AI-powered recipe generation",
               "Nutritional information calculation",
-              "Multi-language support",
               "Dietary preference filtering",
               "Ingredient-based recipe creation",
             ],
@@ -59,55 +55,22 @@ export default function HomePage() {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                  {!isLoading && (
-                    <>
-                      {user ? (
-                        <>
-                          <Link href="/generate">
-                            <Button className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 text-lg font-medium">
-                              <Sparkles className="mr-2 h-5 w-5" />
-                              Generate Recipe
-                            </Button>
-                          </Link>
-                          <Link href="/dashboard">
-                            <Button
-                              variant="outline"
-                              className="border-green-600 text-green-600 hover:bg-green-50 px-8 py-6 text-lg font-medium bg-transparent"
-                            >
-                              <Users className="mr-2 h-5 w-5" />
-                              My Dashboard
-                            </Button>
-                          </Link>
-                        </>
-                      ) : (
-                        <>
-                          <Button
-                            onClick={login}
-                            className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 text-lg font-medium"
-                          >
-                            <LogIn className="mr-2 h-5 w-5" />
-                            Login to Generate
-                          </Button>
-                          <Link href="/recipes">
-                            <Button
-                              variant="outline"
-                              className="border-green-600 text-green-600 hover:bg-green-50 px-8 py-6 text-lg font-medium bg-transparent"
-                            >
-                              <BookOpen className="mr-2 h-5 w-5" />
-                              Browse Recipes
-                            </Button>
-                          </Link>
-                        </>
-                      )}
-                    </>
-                  )}
+                  <Link href="/generate">
+                    <Button className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 text-lg font-medium">
+                      <Sparkles className="mr-2 h-5 w-5" />
+                      Generate Recipe
+                    </Button>
+                  </Link>
+                  <Link href="/recipes">
+                    <Button
+                      variant="outline"
+                      className="border-green-600 text-green-600 hover:bg-green-50 px-8 py-6 text-lg font-medium bg-transparent"
+                    >
+                      <BookOpen className="mr-2 h-5 w-5" />
+                      Browse Recipes
+                    </Button>
+                  </Link>
                 </div>
-
-                {!isLoading && !user && (
-                  <p className="text-sm text-gray-500 mt-4">
-                    Sign in to generate personalized recipes and save your favorites
-                  </p>
-                )}
               </div>
 
               {/* Features Section */}

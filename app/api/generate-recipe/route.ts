@@ -1,13 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getSession } from "@auth0/nextjs-auth0"
 import { createServerClient } from "@/lib/supabase/server"
-import { ensureUserInDatabase, checkDailyLimit, incrementDailyCount } from "@/lib/auth"
 import OpenAI from "openai"
 
 interface RecipeRequest {
   ingredients: string
   category?: string
-  language?: string
+  servings?: number
+  cookingTime?: number
 }
 
 interface Ingredient {
@@ -38,154 +37,71 @@ const client = new OpenAI({
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getSession()
-
-    if (!session?.user) {
-      return NextResponse.json({ error: "Authentication required" }, { status: 401 })
-    }
-
-    const user = await ensureUserInDatabase(session.user)
-    if (!user) {
-      return NextResponse.json({ error: "Failed to create user record" }, { status: 500 })
-    }
-
-    const userId = user.id
-
     const supabase = createServerClient()
 
-    // Check daily generation limit using the auth helper
-    const { canGenerate, count } = await checkDailyLimit(userId)
-
-    if (!canGenerate) {
-      return NextResponse.json(
-        {
-          error: "Daily generation limit reached. You can generate up to 5 recipes per day.",
-          remainingGenerations: 0,
-        },
-        { status: 429 },
-      )
-    }
-
-    const { ingredients, category = "general", language = "en" }: RecipeRequest = await request.json()
+    const { ingredients, category = "general", servings, cookingTime }: RecipeRequest = await request.json()
 
     if (!ingredients || ingredients.trim().length === 0) {
-      return NextResponse.json({ error: "Ingredients are required" }, { status: 400 })
+      return NextResponse.json({ error: "At least one parameter is required" }, { status: 400 })
     }
 
-    // Create prompt for AI based on language
-    const prompts = {
-      en: `
-      Create a healthy recipe using these ingredients: ${ingredients}. 
-${category !== "general" ? `The recipe should be suitable for: ${category}.` : ""}
+    const prompt = `
+Create a healthy recipe with these specifications: ${ingredients}
 
-Return ONLY a JSON object with the following schema:
+${servings ? `This recipe should serve ${servings} people.` : ""}
+${cookingTime ? `Cooking time should be approximately ${cookingTime} minutes.` : ""}
+
+CRITICAL REQUIREMENTS:
+1. If specific ingredients are mentioned, use ONLY those ingredients plus basic seasonings (salt, pepper, herbs, spices)
+2. Do NOT add ingredients that weren't specified by the user
+3. If no specific ingredients are given, create a recipe based on the dietary/cuisine preferences mentioned
+4. Respond ONLY in English
+5. Return ONLY a JSON object with this exact schema:
 
 {
-  "title": "string",                        // Recipe name
-  "description": "string",                  // 1–2 sentence description
+  "title": "string",                        // Recipe name in English
+  "description": "string",                  // 1–2 sentence description in English
   "ingredients": [                          // Array of ingredient strings with measurements
     "2 cups spinach",
     "1 tbsp olive oil",
     "100g chicken breast"
   ],
-  "instructions": [                         // Array of step-by-step cooking instructions
+  "instructions": [                         // Array of step-by-step cooking instructions in English
     "Step 1: Preheat the oven to 180°C.",
     "Step 2: Wash and chop the spinach."
   ],
-  "calories": 450,                          // Estimated calories per serving, integer only (e.g. 450)
-  "budget": 8.50,                           // Estimated cost per serving in USD (e.g. 8.50)
+  "calories": 450,                          // Estimated calories per serving, integer only
+  "budget": 8.50,                           // Estimated cost per serving in USD (number only)
   "nutrition": {                            // Nutritional values per serving
-    "protein": "25g",                       // e.g. "25g"
-    "carbs": "40g",                         // e.g. "40g"
-    "fat": "12g",                           // e.g. "12g"
-    "fiber": "5g"                           // e.g. "5g"
+    "protein": "25g",                       
+    "carbs": "40g",                         
+    "fat": "12g",                           
+    "fiber": "5g"                           
   }
 }
 
-⚠️ Important rules:
-- Do NOT add words like "approximately", "per serving", or "calories" in the calories field — only an integer (e.g., 450).
-- Do NOT add currency symbols or words in the budget field — only a number (e.g., 8.50).
-- ingredients must always be an array of strings (not objects).
-- instructions must always be an array of strings, each step prefixed with "Step X:".
-- Respond ONLY with the JSON. No Markdown code blocks, no extra text.
+⚠️ STRICT RULES:
+- calories field: integer only (e.g., 450), no text
+- budget field: number only (e.g., 8.50), no currency symbols
+- ingredients: array of strings only, not objects
+- instructions: array of strings, each prefixed with "Step X:"
+- ALL TEXT must be in English
+- Respond ONLY with the JSON, no markdown blocks or extra text
+- If user specified ingredients, do NOT add others except seasonings
+    `
 
-      `,
-      es: `Crea una receta saludable usando estos ingredientes: ${ingredients}. ${category !== "general" ? `La receta debe ser adecuada para: ${category}.` : ""}
+    console.log("Generating recipe with prompt:", prompt.substring(0, 200) + "...")
 
-      Por favor responde con un objeto JSON que contenga:
-      - title: Nombre de la receta
-      - description: Descripción breve (1-2 oraciones)
-      - ingredients: Array de ingredientes con medidas
-      - instructions: Instrucciones paso a paso para cocinar
-      - calories: Calorías estimadas por porción
-      - budget: Costo estimado por porción en USD
-      - nutrition: Objeto con valores de proteína, carbohidratos, grasa, fibra
-
-      Hazla saludable y nutritiva.`,
-      de: `Erstelle ein gesundes Rezept mit diesen Zutaten: ${ingredients}. ${category !== "general" ? `Das Rezept sollte geeignet sein für: ${category}.` : ""}
-
-      Bitte antworte mit einem JSON-Objekt, das enthält:
-      - title: Rezeptname
-      - description: Kurze Beschreibung (1-2 Sätze)
-      - ingredients: Array von Zutaten mit Mengenangaben
-      - instructions: Schritt-für-Schritt Kochanweisungen
-      - calories: Geschätzte Kalorien pro Portion
-      - budget: Geschätzte Kosten pro Portion in USD
-      - nutrition: Objekt mit Protein-, Kohlenhydrat-, Fett-, Ballaststoffwerten
-
-      Mache es gesund und nahrhaft.`,
-      zh: `使用这些食材创建一个健康食谱：${ingredients}。${category !== "general" ? `食谱应该适合：${category}。` : ""}
-
-      请用包含以下内容的JSON对象回复：
-      - title: 食谱名称
-      - description: 简短描述（1-2句话）
-      - ingredients: 带有用量的食材数组
-      - instructions: 逐步烹饪说明
-      - calories: 每份估计卡路里
-      - budget: 每份估计成本（美元）
-      - nutrition: 包含蛋白质、碳水化合物、脂肪、纤维值的对象
-
-      让它健康营养。`,
-      ar: `أنشئ وصفة صحية باستخدام هذه المكونات: ${ingredients}. ${category !== "general" ? `يجب أن تكون الوصفة مناسبة لـ: ${category}.` : ""}
-
-      يرجى الرد بكائن JSON يحتوي على:
-      - title: اسم الوصفة
-      - description: وصف مختصر (جملة أو جملتان)
-      - ingredients: مصفوفة من المكونات مع القياسات
-      - instructions: تعليمات الطبخ خطوة بخطوة
-      - calories: السعرات الحرارية المقدرة لكل حصة
-      - budget: التكلفة المقدرة لكل حصة بالدولار الأمريكي
-      - nutrition: كائن بقيم البروتين والكربوهيدرات والدهون والألياف
-
-      اجعلها صحية ومغذية.`,
-      bs: `Kreiraj zdrav recept koristeći ove sastojke: ${ingredients}. ${category !== "general" ? `Recept treba biti prikladan za: ${category}.` : ""}
-
-      Molim odgovori sa JSON objektom koji sadrži:
-      - title: Naziv recepta
-      - description: Kratak opis (1-2 rečenice)
-      - ingredients: Niz sastojaka sa mjerama
-      - instructions: Korak-po-korak uputstva za kuvanje
-      - calories: Procenjene kalorije po porciji
-      - budget: Procenjene troškove po porciji u USD
-      - nutrition: Objekat sa vrijednostima proteina, ugljenih hidrata, masti, vlakana
-
-      Učini ga zdravim i hranjivim.`,
-    }
-
-    console.log("Selected language:", language)
-
-    const prompt = prompts[language as keyof typeof prompts] || prompts.en
-
-    // Call AI/ML API instead of OpenAI
     const completion = await client.chat.completions.create({
       model: "openai/gpt-5-chat-latest",
       messages: [
         {
           role: "system",
           content: `You are a professional nutritionist and chef. 
-          Always respond ONLY with a valid JSON object. 
+          Always respond ONLY with a valid JSON object in English. 
           Do not include explanations, text, or Markdown formatting. 
-          Every field must strictly follow the required format.`,
+          Every field must strictly follow the required format.
+          If ingredients are specified, use ONLY those ingredients plus basic seasonings.`,
         },
         { role: "user", content: prompt },
       ],
@@ -206,11 +122,10 @@ Return ONLY a JSON object with the following schema:
       const parsed = JSON.parse(sanitized)
       recipeData = normalizeRecipe(parsed)
     } catch (parseError) {
-      console.error("Failed to parse AI response even after sanitizing:", recipeContent)
+      console.error("Failed to parse AI response:", recipeContent)
       throw new Error("Invalid AI response format")
     }
 
-    // Save to database
     const { data: savedRecipe, error: dbError } = await supabase
       .from("recipes")
       .insert({
@@ -222,8 +137,8 @@ Return ONLY a JSON object with the following schema:
         budget: recipeData.budget,
         nutrition: recipeData.nutrition,
         category,
-        language,
-        user_id: userId, // Use actual user ID
+        language: "en", // Always English now
+        user_id: null, // No user authentication
       })
       .select()
       .single()
@@ -233,12 +148,9 @@ Return ONLY a JSON object with the following schema:
       throw new Error("Failed to save recipe")
     }
 
-    await incrementDailyCount(userId)
-
     return NextResponse.json({
       success: true,
       recipe: savedRecipe,
-      remainingGenerations: 4 - count, // Use actual count
     })
   } catch (error) {
     console.log("Recipe generation error:", error)
@@ -246,7 +158,7 @@ Return ONLY a JSON object with the following schema:
   }
 }
 
-// Utility to try to fix common JSON issues from LLMs
+// Utility to fix common JSON issues from LLMs
 function sanitizeAIResponse(response: string): string {
   let fixed = response.trim()
 
@@ -255,15 +167,13 @@ function sanitizeAIResponse(response: string): string {
     fixed = fixed.replace(/```(json)?/g, "").trim()
   }
 
-  // ✅ Fix unquoted unit values like: protein: 45 g → protein: "45g"
+  // Fix unquoted unit values like: protein: 45 g → protein: "45g"
   fixed = fixed.replace(/:\s*(\d+)\s*(g|mg|kcal)(?=[,\s}])/gi, ': "$1$2"')
 
-  // ✅ Ensure object keys are quoted properly
-  // e.g. nutrition: { protein: 16 } → "nutrition": { "protein": 16 }
+  // Ensure object keys are quoted properly
   fixed = fixed.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":')
 
-  // ✅ Remove trailing commas that break JSON
-  // e.g. { "a": 1, "b": 2, } → { "a": 1, "b": 2 }
+  // Remove trailing commas that break JSON
   fixed = fixed.replace(/,(\s*[}\]])/g, "$1")
 
   return fixed
@@ -277,7 +187,6 @@ function normalizeRecipe(data: any): AIRecipeResponse {
       step.trim().match(/^step\s*\d+/i) ? step.trim() : `Step ${i + 1}: ${step.trim()}`,
     )
   } else if (typeof data.instructions === "string" && data.instructions.trim() !== "") {
-    // Split by line breaks or numbered list
     const parts = data.instructions.split(/\n|\d+\.\s+/).filter(Boolean)
     instructions = parts.map((step: string, i: number) => `Step ${i + 1}: ${step.trim()}`)
   }

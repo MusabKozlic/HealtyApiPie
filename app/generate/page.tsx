@@ -1,11 +1,10 @@
 "use client"
 
-import { withPageAuthRequired } from "@/lib/mock-auth"
 import { RecipeGeneratorForm } from "@/components/recipe-generator-form"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 
-function GeneratePage() {
+export default function GeneratePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
       <Navigation />
@@ -18,5 +17,3 @@ function GeneratePage() {
     </div>
   )
 }
-
-export default withPageAuthRequired(GeneratePage)
