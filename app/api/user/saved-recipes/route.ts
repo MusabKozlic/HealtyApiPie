@@ -1,15 +1,11 @@
 import { NextResponse } from "next/server"
-import { getSession } from "@auth0/nextjs-auth0"
 import { createClient } from "@supabase/supabase-js"
 
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
 
 export async function GET() {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      return NextResponse.json({ error: "Authentication required" }, { status: 401 })
-    }
+    const userId = "demo-user"
 
     const { data: savedRecipes, error } = await supabase
       .from("user_saved_recipes")
@@ -18,7 +14,7 @@ export async function GET() {
         created_at,
         recipes (*)
       `)
-      .eq("user_id", session.user.sub)
+      .eq("user_id", userId)
       .order("created_at", { ascending: false })
 
     if (error) {

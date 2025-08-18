@@ -1,20 +1,16 @@
 import { NextResponse } from "next/server"
-import { getSession } from "@auth0/nextjs-auth0"
 import { createClient } from "@supabase/supabase-js"
 
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
 
 export async function POST(request: Request) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      return NextResponse.json({ error: "Authentication required" }, { status: 401 })
-    }
+    const userId = "demo-user"
 
     const { recipeId } = await request.json()
 
     const { error } = await supabase.from("user_saved_recipes").insert({
-      user_id: session.user.sub,
+      user_id: userId,
       recipe_id: recipeId,
     })
 
@@ -36,18 +32,11 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      return NextResponse.json({ error: "Authentication required" }, { status: 401 })
-    }
+    const userId = "demo-user"
 
     const { recipeId } = await request.json()
 
-    const { error } = await supabase
-      .from("user_saved_recipes")
-      .delete()
-      .eq("user_id", session.user.sub)
-      .eq("recipe_id", recipeId)
+    const { error } = await supabase.from("user_saved_recipes").delete().eq("user_id", userId).eq("recipe_id", recipeId)
 
     if (error) {
       console.error("Error unsaving recipe:", error)

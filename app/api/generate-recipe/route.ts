@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getSession } from "@auth0/nextjs-auth0"
 import { createServerClient } from "@/lib/supabase/server"
 import OpenAI from "openai"
 
@@ -37,12 +36,7 @@ const client = new OpenAI({
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      return NextResponse.json({ error: "Authentication required" }, { status: 401 })
-    }
-
-    const userId = session.user.sub
+    const userId = "demo-user"
 
     // Check daily generation limit
     const supabase = createServerClient()
@@ -79,7 +73,7 @@ export async function POST(request: NextRequest) {
     // Create prompt for AI based on language
     const prompts = {
       en: `
-      Create a healthy recipe using these ingredients: {ingredients}. 
+      Create a healthy recipe using these ingredients: ${ingredients}. 
 ${category !== "general" ? `The recipe should be suitable for: ${category}.` : ""}
 
 Return ONLY a JSON object with the following schema:
