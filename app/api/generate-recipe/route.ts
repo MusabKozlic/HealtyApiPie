@@ -140,7 +140,7 @@ Return ONLY a JSON object with the following schema:
 
     // Call AI/ML API instead of OpenAI
     const completion = await client.chat.completions.create({
-      model: "mistralai/Mistral-7B-Instruct-v0.2",
+      model: "openai/gpt-5-chat-latest",
       messages: [
         {
           role: "system", content: `You are a professional nutritionist and chef. 
