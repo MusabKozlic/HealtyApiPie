@@ -1,7 +1,5 @@
 "use client"
 
-import { withPageAuthRequired } from "@auth0/nextjs-auth0"
-import { useUser } from "@auth0/nextjs-auth0/client"
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -22,7 +20,8 @@ interface Recipe {
 }
 
 function DashboardPage() {
-  const { user, isLoading } = useUser()
+  const [user, setUser] = useState({ name: "Demo User", email: "demo@example.com" })
+  const [isLoading, setIsLoading] = useState(false)
   const [myRecipes, setMyRecipes] = useState<Recipe[]>([])
   const [savedRecipes, setSavedRecipes] = useState<Recipe[]>([])
   const [loading, setLoading] = useState(true)
@@ -170,4 +169,4 @@ function DashboardPage() {
   )
 }
 
-export default withPageAuthRequired(DashboardPage)
+export default DashboardPage
