@@ -3,22 +3,12 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Menu, X, ChefHat } from "lucide-react"
-import { useI18n } from "@/lib/i18n/context"
-
-const languages = [
-  { value: "en", label: "English" },
-  { value: "es", label: "Español" },
-  { value: "de", label: "Deutsch" },
-  { value: "zh", label: "中文" },
-  { value: "ar", label: "العربية" },
-  { value: "bs", label: "Bosanski" },
-]
+import { Menu, X, ChefHat, User, LogOut } from "lucide-react"
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { language, setLanguage, t } = useI18n()
+  const user = null // Set to null for now to show login state
+  const isLoading = false
 
   return (
     <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
@@ -27,29 +17,43 @@ export function Navigation() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 font-serif font-bold text-xl text-gray-900">
             <ChefHat className="h-6 w-6 text-green-600" />
-            {t("nav.logo")}
+            HealthyRecipes
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
-            <Link href="/" className="text-gray-700 hover:text-green-600 transition-colors">
-              {t("nav.generateRecipe")}
+            <Link href="/generate" className="text-gray-700 hover:text-green-600 transition-colors">
+              Generate Recipe
             </Link>
             <Link href="/recipes" className="text-gray-700 hover:text-green-600 transition-colors">
-              {t("nav.browseRecipes")}
+              Browse Recipes
             </Link>
-            <Select value={language} onValueChange={setLanguage}>
-              <SelectTrigger className="w-32">
-                <SelectValue placeholder={t("nav.language")} />
-              </SelectTrigger>
-              <SelectContent>
-                {languages.map((lang) => (
-                  <SelectItem key={lang.value} value={lang.value}>
-                    {lang.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+
+            {!isLoading && (
+              <>
+                {user ? (
+                  <div className="flex items-center gap-4">
+                    <Link href="/dashboard" className="text-gray-700 hover:text-green-600 transition-colors">
+                      My Dashboard
+                    </Link>
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      <span className="text-sm text-gray-600">{user.name}</span>
+                    </div>
+                    <Button variant="outline" size="sm" asChild>
+                      <a href="/api/auth/logout">
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Logout
+                      </a>
+                    </Button>
+                  </div>
+                ) : (
+                  <Button asChild>
+                    <Link href="/login">Login</Link>
+                  </Button>
+                )}
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -63,31 +67,49 @@ export function Navigation() {
           <div className="md:hidden py-4 border-t border-gray-200">
             <div className="flex flex-col gap-4">
               <Link
-                href="/"
+                href="/generate"
                 className="text-gray-700 hover:text-green-600 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                {t("nav.generateRecipe")}
+                Generate Recipe
               </Link>
               <Link
                 href="/recipes"
                 className="text-gray-700 hover:text-green-600 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                {t("nav.browseRecipes")}
+                Browse Recipes
               </Link>
-              <Select value={language} onValueChange={setLanguage}>
-                <SelectTrigger className="w-fit bg-transparent">
-                  <SelectValue placeholder={t("nav.language")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {languages.map((lang) => (
-                    <SelectItem key={lang.value} value={lang.value}>
-                      {lang.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+
+              {!isLoading && (
+                <>
+                  {user ? (
+                    <>
+                      <Link
+                        href="/dashboard"
+                        className="text-gray-700 hover:text-green-600 transition-colors"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        My Dashboard
+                      </Link>
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <User className="h-4 w-4" />
+                        {user.name}
+                      </div>
+                      <Button variant="outline" size="sm" asChild className="w-fit bg-transparent">
+                        <a href="/api/auth/logout">
+                          <LogOut className="h-4 w-4 mr-2" />
+                          Logout
+                        </a>
+                      </Button>
+                    </>
+                  ) : (
+                    <Button asChild className="w-fit">
+                      <Link href="/login">Login</Link>
+                    </Button>
+                  )}
+                </>
+              )}
             </div>
           </div>
         )}

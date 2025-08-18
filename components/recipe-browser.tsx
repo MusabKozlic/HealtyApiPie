@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Search, Filter, ChevronRight } from "lucide-react"
 import { RecipeCard } from "@/components/recipe-card"
-import { useI18n } from "@/lib/i18n/context"
 import type { Recipe } from "@/lib/supabase/client"
 
 const categories = [
@@ -27,26 +26,15 @@ const categories = [
   "diabetic",
 ]
 
-const languages = [
-  { value: "en", label: "English" },
-  { value: "es", label: "Español" },
-  { value: "de", label: "Deutsch" },
-  { value: "zh", label: "中文" },
-  { value: "ar", label: "العربية" },
-  { value: "bs", label: "Bosanski" },
-]
-
 export function RecipeBrowser() {
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
-  const [selectedLanguage, setSelectedLanguage] = useState("en")
   const [currentPage, setCurrentPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
   const [error, setError] = useState("")
 
-  const { t } = useI18n()
   const recipesPerPage = 12
 
   const fetchRecipes = async (page = 1, reset = false) => {
@@ -55,7 +43,7 @@ export function RecipeBrowser() {
       setError("")
 
       const params = new URLSearchParams({
-        language: selectedLanguage,
+        language: "en", // Hardcoded to English
         limit: recipesPerPage.toString(),
         offset: ((page - 1) * recipesPerPage).toString(),
       })
@@ -93,7 +81,7 @@ export function RecipeBrowser() {
   // Initial load
   useEffect(() => {
     fetchRecipes(1, true)
-  }, [selectedCategory, selectedLanguage])
+  }, [selectedCategory])
 
   // Search with debounce
   useEffect(() => {
@@ -122,7 +110,7 @@ export function RecipeBrowser() {
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <Filter className="h-5 w-5 text-green-600" />
-            {t("recipes.searchTitle")}
+            Search & Filter Recipes
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -131,21 +119,21 @@ export function RecipeBrowser() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
-                placeholder={t("recipes.searchPlaceholder")}
+                placeholder="Search recipes by title, ingredients, or description..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 h-12 sm:h-10"
               />
             </div>
             <Button type="submit" className="bg-green-600 hover:bg-green-700 h-12 sm:h-10 sm:px-6">
-              {t("recipes.searchButton")}
+              Search
             </Button>
           </form>
 
           {/* Filters */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">{t("recipes.categoryLabel")}</label>
+              <label className="text-sm font-medium text-gray-700">Category</label>
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger className="h-12 sm:h-10">
                   <SelectValue placeholder="Select category" />
@@ -153,23 +141,7 @@ export function RecipeBrowser() {
                 <SelectContent>
                   {categories.map((cat) => (
                     <SelectItem key={cat} value={cat}>
-                      {t(`categories.${cat}`)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">{t("recipes.languageLabel")}</label>
-              <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
-                <SelectTrigger className="h-12 sm:h-10">
-                  <SelectValue placeholder="Select language" />
-                </SelectTrigger>
-                <SelectContent>
-                  {languages.map((lang) => (
-                    <SelectItem key={lang.value} value={lang.value}>
-                      {lang.label}
+                      {cat === "all" ? "All Categories" : cat.charAt(0).toUpperCase() + cat.slice(1).replace("-", " ")}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -199,8 +171,8 @@ export function RecipeBrowser() {
             <CardContent>
               <div className="text-gray-500 mb-4">
                 <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <h3 className="text-lg font-semibold mb-2">{t("recipes.noRecipes")}</h3>
-                <p className="text-sm sm:text-base">{t("recipes.noRecipesDesc")}</p>
+                <h3 className="text-lg font-semibold mb-2">No recipes found</h3>
+                <p className="text-sm sm:text-base">Try adjusting your search terms or filters to find more recipes.</p>
               </div>
             </CardContent>
           </Card>
@@ -219,11 +191,11 @@ export function RecipeBrowser() {
             {loading ? (
               <>
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600 mr-2" />
-                {t("recipes.loading")}
+                Loading...
               </>
             ) : (
               <>
-                {t("recipes.loadMore")}
+                Load More Recipes
                 <ChevronRight className="ml-2 h-4 w-4" />
               </>
             )}
@@ -234,7 +206,7 @@ export function RecipeBrowser() {
       {/* Recipe Count */}
       {recipes.length > 0 && (
         <div className="text-center text-sm text-gray-600">
-          {t("recipes.showingCount", { count: recipes.length, plural: recipes.length !== 1 ? "s" : "" })}
+          Showing {recipes.length} recipe{recipes.length !== 1 ? "s" : ""}
         </div>
       )}
     </div>

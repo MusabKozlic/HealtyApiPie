@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Loader2, Sparkles } from "lucide-react"
 import { RecipeResult } from "@/components/recipe-result"
-import { useI18n } from "@/lib/i18n/context"
 import type { Recipe } from "@/lib/supabase/client"
 
 const DIETARY_OPTIONS = [
@@ -43,8 +42,6 @@ export function RecipeGeneratorForm() {
   const [generatedRecipe, setGeneratedRecipe] = useState<Recipe | null>(null)
   const [error, setError] = useState("")
 
-  const { language, t } = useI18n()
-
   const toggleDietary = (option: string) => {
     setSelectedDietary((prev) => (prev.includes(option) ? prev.filter((item) => item !== option) : [...prev, option]))
   }
@@ -71,7 +68,7 @@ export function RecipeGeneratorForm() {
         body: JSON.stringify({
           ingredients: ingredients.trim(),
           category: `${category}, ${cuisine} cuisine`,
-          language,
+          language: "en", // Hardcoded to English
         }),
       })
 
@@ -94,7 +91,9 @@ export function RecipeGeneratorForm() {
       {/* Header */}
       <div className="text-center mb-8">
         <h1 className="font-serif text-3xl md:text-4xl font-bold text-gray-900 mb-2">Generate Your Recipe</h1>
-        <p className="text-lg text-gray-600">Tell us what you have and we'll create something delicious</p>
+        <p className="text-lg text-gray-600">
+          Tell us what you have and we'll create something delicious and budget-friendly
+        </p>
       </div>
 
       {/* Input Form */}

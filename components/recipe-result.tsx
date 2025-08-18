@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Clock, Users, Flame, Share2, Bookmark } from "lucide-react"
+import { Clock, Users, Flame, Share2, Bookmark, DollarSign } from "lucide-react"
 import type { Recipe } from "@/lib/supabase/client"
 
 interface RecipeResultProps {
@@ -61,6 +61,12 @@ export function RecipeResult({ recipe }: RecipeResultProps) {
               <span className="whitespace-nowrap">{recipe.calories} calories</span>
             </div>
           )}
+          {recipe.budget && (
+            <div className="flex items-center gap-1 text-sm text-gray-600">
+              <DollarSign className="h-4 w-4 text-green-500 flex-shrink-0" />
+              <span className="whitespace-nowrap">${recipe.budget} per serving</span>
+            </div>
+          )}
           <div className="flex items-center gap-1 text-sm text-gray-600">
             <Clock className="h-4 w-4 text-blue-500 flex-shrink-0" />
             <span className="whitespace-nowrap">30 min prep</span>
@@ -87,13 +93,15 @@ export function RecipeResult({ recipe }: RecipeResultProps) {
                 key={index}
                 className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition"
               >
-                <input type="checkbox" className="w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500" />
+                <input
+                  type="checkbox"
+                  className="w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500"
+                />
                 <span className="text-gray-800 text-sm sm:text-base leading-relaxed">{ingredient}</span>
               </li>
             ))}
           </ul>
         </div>
-
 
         {/* Instructions */}
         <div>

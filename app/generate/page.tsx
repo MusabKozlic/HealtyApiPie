@@ -1,5 +1,6 @@
 import { RecipeGeneratorForm } from "@/components/recipe-generator-form"
 import { Navigation } from "@/components/navigation"
+import { Footer } from "@/components/footer"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -33,6 +34,7 @@ export default function GeneratePage() {
           <RecipeGeneratorForm />
         </div>
       </main>
+      <Footer />
     </div>
   )
 }
