@@ -1,10 +1,13 @@
 "use client"
 
+import { withPageAuthRequired } from "@/lib/mock-auth"
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Navigation } from "@/components/navigation"
+import { Footer } from "@/components/footer"
 
 interface Recipe {
   id: string
@@ -20,18 +23,14 @@ interface Recipe {
 }
 
 function DashboardPage() {
-  const [user, setUser] = useState({ name: "Demo User", email: "demo@example.com" })
-  const [isLoading, setIsLoading] = useState(false)
   const [myRecipes, setMyRecipes] = useState<Recipe[]>([])
   const [savedRecipes, setSavedRecipes] = useState<Recipe[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (user) {
-      fetchMyRecipes()
-      fetchSavedRecipes()
-    }
-  }, [user])
+    fetchMyRecipes()
+    fetchSavedRecipes()
+  }, [])
 
   const fetchMyRecipes = async () => {
     try {
@@ -74,17 +73,22 @@ function DashboardPage() {
     }
   }
 
-  if (isLoading || loading) {
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
+        <Navigation />
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="w-12 h-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+        <Footer />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
+      <Navigation />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">My Dashboard</h1>
           <p className="text-gray-600 mt-2">Manage your generated and saved recipes</p>
@@ -165,8 +169,9 @@ function DashboardPage() {
           </TabsContent>
         </Tabs>
       </div>
+      <Footer />
     </div>
   )
 }
 
-export default DashboardPage
+export default withPageAuthRequired(DashboardPage)

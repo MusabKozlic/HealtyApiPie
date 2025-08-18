@@ -1,5 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { getSession } from "@auth0/nextjs-auth0"
 import { createServerClient } from "@/lib/supabase/server"
+import { ensureUserInDatabase, checkDailyLimit, incrementDailyCount } from "@/lib/auth"
 import OpenAI from "openai"
 
 interface RecipeRequest {
@@ -36,29 +38,29 @@ const client = new OpenAI({
 
 export async function POST(request: NextRequest) {
   try {
-    const userId = "demo-user"
+    const session = await getSession()
 
-    // Check daily generation limit
-    const supabase = createServerClient()
-    const today = new Date().toISOString().split("T")[0]
-
-    const { data: limitData, error: limitError } = await supabase
-      .from("user_generation_limits")
-      .select("generation_count")
-      .eq("user_id", userId)
-      .eq("generation_date", today)
-      .single()
-
-    if (limitError && limitError.code !== "PGRST116") {
-      console.error("Error checking generation limit:", limitError)
-      return NextResponse.json({ error: "Failed to check generation limit" }, { status: 500 })
+    if (!session?.user) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 })
     }
 
-    const currentCount = limitData?.generation_count || 0
-    if (currentCount >= 5) {
+    const user = await ensureUserInDatabase(session.user)
+    if (!user) {
+      return NextResponse.json({ error: "Failed to create user record" }, { status: 500 })
+    }
+
+    const userId = user.id
+
+    const supabase = createServerClient()
+
+    // Check daily generation limit using the auth helper
+    const { canGenerate, count } = await checkDailyLimit(userId)
+
+    if (!canGenerate) {
       return NextResponse.json(
         {
           error: "Daily generation limit reached. You can generate up to 5 recipes per day.",
+          remainingGenerations: 0,
         },
         { status: 429 },
       )
@@ -221,7 +223,7 @@ Return ONLY a JSON object with the following schema:
         nutrition: recipeData.nutrition,
         category,
         language,
-        user_id: userId, // Adding user tracking
+        user_id: userId, // Use actual user ID
       })
       .select()
       .single()
@@ -231,17 +233,12 @@ Return ONLY a JSON object with the following schema:
       throw new Error("Failed to save recipe")
     }
 
-    await supabase.from("user_generation_limits").upsert({
-      user_id: userId,
-      generation_date: today,
-      generation_count: currentCount + 1,
-      updated_at: new Date().toISOString(),
-    })
+    await incrementDailyCount(userId)
 
     return NextResponse.json({
       success: true,
       recipe: savedRecipe,
-      remainingGenerations: 4 - currentCount, // Returning remaining generations
+      remainingGenerations: 4 - count, // Use actual count
     })
   } catch (error) {
     console.log("Recipe generation error:", error)

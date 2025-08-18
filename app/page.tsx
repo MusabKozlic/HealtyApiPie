@@ -1,34 +1,16 @@
+"use client"
+
+import { useUser } from "@/lib/mock-auth"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Sparkles, BookOpen, Clock, Users, Flame } from "lucide-react"
+import { Sparkles, BookOpen, Clock, Users, Flame, LogIn } from "lucide-react"
 import Link from "next/link"
-import type { Metadata } from "next"
-
-export const metadata: Metadata = {
-  title: "Healthy Recipe Generator - AI-Powered Nutrition & Meal Planning",
-  description:
-    "Generate personalized healthy recipes using AI. Enter your ingredients and get nutritious meal ideas with detailed nutritional information. Supports vegan, keto, gluten-free, and more dietary preferences.",
-  keywords:
-    "healthy recipe generator, AI recipe generator, nutrition calculator, meal planning, healthy cooking, vegan recipes, keto recipes, gluten-free recipes, dietary recipes, cooking AI, nutritional information",
-  openGraph: {
-    title: "Healthy Recipe Generator - AI-Powered Nutrition",
-    description: "Transform your ingredients into nutritious, delicious meals with AI-powered recipe generation.",
-    type: "website",
-    url: "/",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Healthy Recipe Generator - AI-Powered Nutrition",
-    description: "Generate personalized healthy recipes using AI with detailed nutritional information.",
-  },
-  alternates: {
-    canonical: "/",
-  },
-}
 
 export default function HomePage() {
+  const { user, isLoading, login } = useUser()
+
   return (
     <>
       <script
@@ -76,24 +58,56 @@ export default function HomePage() {
                   Transform your ingredients into nutritious, delicious meals with AI-powered recipe generation
                 </p>
 
-                {/* Navigation Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                  <Link href="/generate">
-                    <Button className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 text-lg font-medium">
-                      <Sparkles className="mr-2 h-5 w-5" />
-                      Generate Recipe
-                    </Button>
-                  </Link>
-                  <Link href="/recipes">
-                    <Button
-                      variant="outline"
-                      className="border-green-600 text-green-600 hover:bg-green-50 px-8 py-6 text-lg font-medium bg-transparent"
-                    >
-                      <BookOpen className="mr-2 h-5 w-5" />
-                      Browse Recipes
-                    </Button>
-                  </Link>
+                  {!isLoading && (
+                    <>
+                      {user ? (
+                        <>
+                          <Link href="/generate">
+                            <Button className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 text-lg font-medium">
+                              <Sparkles className="mr-2 h-5 w-5" />
+                              Generate Recipe
+                            </Button>
+                          </Link>
+                          <Link href="/dashboard">
+                            <Button
+                              variant="outline"
+                              className="border-green-600 text-green-600 hover:bg-green-50 px-8 py-6 text-lg font-medium bg-transparent"
+                            >
+                              <Users className="mr-2 h-5 w-5" />
+                              My Dashboard
+                            </Button>
+                          </Link>
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            onClick={login}
+                            className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 text-lg font-medium"
+                          >
+                            <LogIn className="mr-2 h-5 w-5" />
+                            Login to Generate
+                          </Button>
+                          <Link href="/recipes">
+                            <Button
+                              variant="outline"
+                              className="border-green-600 text-green-600 hover:bg-green-50 px-8 py-6 text-lg font-medium bg-transparent"
+                            >
+                              <BookOpen className="mr-2 h-5 w-5" />
+                              Browse Recipes
+                            </Button>
+                          </Link>
+                        </>
+                      )}
+                    </>
+                  )}
                 </div>
+
+                {!isLoading && !user && (
+                  <p className="text-sm text-gray-500 mt-4">
+                    Sign in to generate personalized recipes and save your favorites
+                  </p>
+                )}
               </div>
 
               {/* Features Section */}
