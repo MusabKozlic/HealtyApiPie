@@ -10,7 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .select("id, updated_at")
     .order("created_at", { ascending: false })
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://your-domain.com"
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://v0-recipe-generator-app-gamma.vercel.app/"
 
   const staticPages = [
     {
