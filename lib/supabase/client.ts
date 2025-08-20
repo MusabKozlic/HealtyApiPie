@@ -5,6 +5,15 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
+export type User = {
+  id: string
+  name?: string | null
+  email?: string | null
+  roles: string[] // roles for authorization management
+  avatar?: string | null
+  created_at?: string | null
+}
+
 export type Recipe = {
   id: string
   title: string

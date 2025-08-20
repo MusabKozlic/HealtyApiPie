@@ -1,12 +1,23 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Menu, X, ChefHat } from "lucide-react"
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [user, setUser] = useState<any>(null)
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => setUser(data.user))
+  }, [])
+
+  const handleLogout = () => {
+    window.location.href = "/api/auth/logout"
+  }
 
   return (
     <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
@@ -26,6 +37,42 @@ export function Navigation() {
             <Link href="/generate" className="text-gray-700 hover:text-green-600 transition-colors">
               Generate Recipe
             </Link>
+
+            {/* Auth buttons */}
+            {user ? (
+              <div className="relative">
+                <button
+                  className="flex items-center gap-2 focus:outline-none"
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                >
+                  <img
+                    src={user.picture}
+                    alt={user.name}
+                    className="h-8 w-8 rounded-full"
+                  />
+                  <span className="text-gray-700">{user.name}</span>
+                </button>
+                {isMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg">
+                    <button
+                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" onClick={() => (window.location.href = "/api/login")}>
+                  Login
+                </Button>
+                <Button size="sm" className="bg-green-600 text-white hover:bg-green-700" onClick={() => (window.location.href = "/api/signup")}>
+                  Sign up
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -52,6 +99,14 @@ export function Navigation() {
               >
                 Generate Recipe
               </Link>
+
+              {/* Mobile auth links */}
+              <a href="/api/login" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-green-600">
+                Login
+              </a>
+              <a href="/api/signup" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-green-600">
+                Sign up
+              </a>
             </div>
           </div>
         )}
