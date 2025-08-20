@@ -43,7 +43,6 @@ export function RecipeBrowser() {
       setError("")
 
       const params = new URLSearchParams({
-        language: "en", // Hardcoded to English
         limit: recipesPerPage.toString(),
         offset: ((page - 1) * recipesPerPage).toString(),
       })

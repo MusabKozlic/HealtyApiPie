@@ -14,7 +14,9 @@ export type Recipe = {
   calories: number | null
   nutrition: Record<string, any> | null
   category: string | null
+  budget?: string | number
   language: string
   created_at: string
   updated_at: string
+  imageurl?: string
 }

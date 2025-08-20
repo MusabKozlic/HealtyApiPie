@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase/server"
 import OpenAI from "openai"
+import { error } from "console"
 
 interface RecipeRequest {
   ingredients: string
@@ -21,6 +22,7 @@ interface AIRecipeResponse {
   instructions: string[]
   calories: string | number
   budget?: string | number
+  imageUrl?: string | null
   nutrition: {
     protein: string
     carbs: string
@@ -52,11 +54,13 @@ ${servings ? `This recipe should serve ${servings} people.` : ""}
 ${cookingTime ? `Cooking time should be approximately ${cookingTime} minutes.` : ""}
 
 CRITICAL REQUIREMENTS:
-1. If specific ingredients are mentioned, use ONLY those ingredients plus basic seasonings (salt, pepper, herbs, spices)
+1. If specific ingredients are mentioned, use ONLY those ingredients plus basic seasonings (salt, pepper, herbs, spices) or you can mention other optional seasonings.
 2. Do NOT add ingredients that weren't specified by the user
 3. If no specific ingredients are given, create a recipe based on the dietary/cuisine preferences mentioned
 4. Respond ONLY in English
-5. Return ONLY a JSON object with this exact schema:
+5. If user mention something unhealthy, remove it if recipe make sense without it or give the best healty option for that recipe.
+6. Cooking time should be approximately to ${cookingTime} minutes, for example if user select 15min then it should be 15min +/- 5min.
+7. Return ONLY a JSON object with this exact schema:
 
 {
   "title": "string",                        // Recipe name in English
@@ -126,6 +130,69 @@ CRITICAL REQUIREMENTS:
       throw new Error("Invalid AI response format")
     }
 
+    // Generate recipe image
+    // Generate recipe image using AI/ML API
+    let imageUrl: string | null = null
+    try {
+      const imagePrompt = `
+      High-quality, realistic food photography of:
+      "${recipeData.title}".
+      Description: ${recipeData.description}
+
+      Guidelines:
+      - Show the final plated dish styled for a cookbook or food blog
+      - Natural lighting, vibrant colors, appetizing composition
+      - No text, watermarks, or extra objects
+      - Photorealistic, not cartoonish
+`
+
+      const response = await fetch("https://api.aimlapi.com/v1/images/generations", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.AI_API_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prompt: imagePrompt,
+          model: "dall-e-3",
+          size: "1024x1024",
+        }),
+      })
+
+      const result = await response.json()
+
+      if (result.data && result.data[0]?.url) {
+        const imageBuffer = await fetch(result.data[0].url).then((res) => res.arrayBuffer())
+        const safeTitle = recipeData.title
+          .normalize("NFD")                 // normalize accented characters
+          .replace(/[\u0300-\u036f]/g, "") // remove accents
+          .replace(/[^a-zA-Z0-9-_]/g, "_") // replace invalid characters with underscore
+          .toLowerCase()
+
+        const fileName = `recipes/${safeTitle}_${Date.now()}.png`
+
+        // Upload to Supabase Storage
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("recipes")
+          .upload(fileName, Buffer.from(imageBuffer), {
+            contentType: "image/png",
+          })
+
+        if (uploadError) {
+          console.error("Supabase storage upload error:", uploadError)
+        } else {
+          const { data: { publicUrl } } = supabase.storage.from("recipes").getPublicUrl(fileName)
+
+          imageUrl = publicUrl
+          recipeData.imageUrl = imageUrl
+          console.log("Public image URL:", imageUrl)
+        }
+      }
+    } catch (err) {
+      console.error("Error generating image:", err)
+    }
+
+
     const { data: savedRecipe, error: dbError } = await supabase
       .from("recipes")
       .insert({
@@ -138,7 +205,7 @@ CRITICAL REQUIREMENTS:
         nutrition: recipeData.nutrition,
         category,
         language: "en", // Always English now
-        user_id: null, // No user authentication
+        imageurl: recipeData.imageUrl || null,
       })
       .select()
       .single()
@@ -196,12 +263,12 @@ function normalizeRecipe(data: any): AIRecipeResponse {
     description: data.description || "",
     ingredients: Array.isArray(data.ingredients)
       ? data.ingredients.map((ing: any) => {
-          if (typeof ing === "string") return ing
-          if (typeof ing === "object" && ing.name) {
-            return `${ing.name}${ing.measurement ? ` - ${ing.measurement}` : ""}`
-          }
-          return String(ing)
-        })
+        if (typeof ing === "string") return ing
+        if (typeof ing === "object" && ing.name) {
+          return `${ing.name}${ing.measurement ? ` - ${ing.measurement}` : ""}`
+        }
+        return String(ing)
+      })
       : [],
     instructions,
     calories: typeof data.calories === "number" ? data.calories : String(data.calories || ""),

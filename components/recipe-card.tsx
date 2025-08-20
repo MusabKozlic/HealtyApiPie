@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Clock, Flame, Users, Eye, Bookmark, DollarSign } from "lucide-react"
+import Image from "next/image"
 import { useState } from "react"
 import { RecipeModal } from "@/components/recipe-modal"
 import Link from "next/link"
@@ -28,13 +29,32 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
     <>
       <Card className="group hover:shadow-xl transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm overflow-hidden h-full flex flex-col">
         {/* Recipe Image Placeholder */}
-        <div className="h-40 sm:h-48 bg-gradient-to-br from-green-100 to-emerald-200 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+        <div className="h-40 sm:h-48 relative overflow-hidden">
+          {/* Recipe Image */}
+          {recipe.imageurl ? (
+            <Image
+              src={recipe.imageurl}
+              alt={recipe.title}
+              fill
+              sizes="(max-width: 640px) 100vw, 50vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              priority={false}
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-green-100 to-emerald-200" />
+          )}
+
+          {/* Gradient overlay for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+
+          {/* Bookmark button */}
           <div className="absolute top-3 right-3">
             <Button variant="ghost" size="sm" className="bg-white/80 hover:bg-white p-2">
               <Bookmark className="h-4 w-4" />
             </Button>
           </div>
+
+          {/* Category badge */}
           <div className="absolute bottom-3 left-3">
             {recipe.category && (
               <Badge variant="secondary" className="bg-white/90 text-gray-800 capitalize text-xs">
@@ -43,6 +63,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
             )}
           </div>
         </div>
+
 
         <CardHeader className="pb-3 flex-shrink-0">
           <Link href={`/recipe/${recipe.id}`}>
