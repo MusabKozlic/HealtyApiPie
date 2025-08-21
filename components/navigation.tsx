@@ -4,10 +4,11 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Menu, X, ChefHat } from "lucide-react"
+import { DbUser } from "@/lib/types/DBUser"
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<DbUser |null>(null)
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -46,8 +47,8 @@ export function Navigation() {
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >
                   <img
-                    src={user.picture}
-                    alt={user.name}
+                    src={user.picture || "/diverse-user-avatars.png"}
+                    alt={user.name || "User Avatar"}
                     className="h-8 w-8 rounded-full"
                   />
                   <span className="text-gray-700">{user.name}</span>
@@ -105,8 +106,8 @@ export function Navigation() {
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center gap-2">
                     <img
-                      src={user.picture}
-                      alt={user.name}
+                      src={user.picture || "/diverse-user-avatars.png"}
+                      alt={user.name || "User Avatar"}
                       className="h-8 w-8 rounded-full"
                     />
                     <span className="text-gray-700">{user.name}</span>

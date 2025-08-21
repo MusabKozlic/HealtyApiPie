@@ -1,8 +1,16 @@
 import { NextResponse } from "next/server"
 import jwt from "jsonwebtoken"
+import { createClient } from "@supabase/supabase-js"
+import { mapAuth0ToDb } from "@/lib/utils"
+import { Auth0User } from "@/lib/types/auth0User"
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseAnonKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
+  const { searchParams } = new URL(request.url);
+  const redirectTo = searchParams.get("redirectTo") || "/"
   const code = searchParams.get("code")
   if (!code) {
     return NextResponse.redirect(new URL("/", request.url))
@@ -25,7 +33,6 @@ export async function GET(request: Request) {
     }),
   })
 
-  console.log("Token response:", tokenResponse)
   if (!tokenResponse.ok) {
     return NextResponse.redirect(new URL("/", request.url))
   }
@@ -37,21 +44,38 @@ export async function GET(request: Request) {
     headers: { Authorization: `Bearer ${access_token}` },
   })
 
-  console.log("User response:", userResponse)
   if (!userResponse.ok) {
     return NextResponse.redirect(new URL("/", request.url))
   }
 
-  const user = await userResponse.json()
+  const auth0User: Auth0User = await userResponse.json()
 
-  // Save user info in a cookie (HTTP-only)
-  const res = NextResponse.redirect(new URL("/", request.url))
-  res.cookies.set("user", jwt.sign(user, process.env.AUTH0_SECRET!), {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 7, // 7 days
-  })
+  const dbPayload = mapAuth0ToDb(auth0User)
+
+  const { data, error } = await supabase
+    .from("auth_users")
+    .upsert(dbPayload, { onConflict: "auth0_id" })
+    .select()
+    .single()
+
+  if (error) {
+    throw new Error(`Database error: ${error.message}`)
+  }
+
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+  const redirectUrl = new URL(redirectTo, baseUrl);
+
+  const res = NextResponse.redirect(redirectUrl)
+  res.cookies.set(
+    "user",
+    jwt.sign(auth0User, process.env.AUTH0_SECRET!),
+    {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    }
+  )
 
   return res
 }

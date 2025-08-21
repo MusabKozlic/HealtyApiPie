@@ -105,7 +105,29 @@ CRITICAL REQUIREMENTS:
           Always respond ONLY with a valid JSON object in English. 
           Do not include explanations, text, or Markdown formatting. 
           Every field must strictly follow the required format.
-          If ingredients are specified, use ONLY those ingredients plus basic seasonings.`,
+          If ingredients are specified, use ONLY those ingredients plus basic seasonings.
+          
+
+          If ingredients are unhealthy (like chocolate, pork, alcohol, soda, fried foods, candy, processed meats) 
+          OR if the input is unrelated to food/recipes (random text, nonsense, non-food queries), 
+          then respond ONLY with this exact JSON:
+
+          {
+            "title": "Cannot generate healthy recipe",
+            "description": "",
+            "ingredients": [],
+            "instructions": [],
+            "calories": "",
+            "budget": "",
+            "nutrition": {
+              "protein": "",
+              "carbs": "",
+              "fat": "",
+              "fiber": ""
+            },
+            "imageUrl": null
+          }
+          `,
         },
         { role: "user", content: prompt },
       ],
@@ -128,6 +150,10 @@ CRITICAL REQUIREMENTS:
     } catch (parseError) {
       console.error("Failed to parse AI response:", recipeContent)
       throw new Error("Invalid AI response format")
+    }
+
+    if(recipeData.title === "Cannot generate healthy recipe") {
+      return NextResponse.json(recipeData, { status: 400 })
     }
 
     // Generate recipe image

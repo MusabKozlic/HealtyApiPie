@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
@@ -11,6 +11,7 @@ import { RecipeResult } from "@/components/recipe-result"
 import type { Recipe } from "@/lib/supabase/client"
 import { DIETARY_OPTIONS } from "@/lib/types/categories"
 import { CUISINE_OPTIONS } from "@/lib/types/categories"
+import { DbUser } from "@/lib/types/DBUser"
 
 
 export function RecipeGeneratorForm() {
@@ -23,6 +24,14 @@ export function RecipeGeneratorForm() {
   const [generatedRecipe, setGeneratedRecipe] = useState<Recipe | null>(null)
   const [error, setError] = useState("")
   const recipeRef = useRef<HTMLDivElement>(null) // Ref for scrolling to the recipe
+  const [user, setUser] = useState<DbUser | null>(null)
+
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => setUser(data.user))
+  }, [])
 
   const toggleDietary = (option: string) => {
     setSelectedDietary((prev) => (prev.includes(option) ? prev.filter((item) => item !== option) : [...prev, option]))
@@ -37,6 +46,12 @@ export function RecipeGeneratorForm() {
       setError(
         "Please enter at least one parameter (ingredients, dietary preference, cuisine, servings, or cooking time)",
       )
+      return
+    }
+
+    if (!user) {
+      const currentPath = window.location.pathname
+      window.location.href = `/api/login?redirectTo=${encodeURIComponent(currentPath)}`
       return
     }
 
@@ -66,6 +81,9 @@ export function RecipeGeneratorForm() {
 
       const data = await response.json()
 
+      if (response.status === 400) {
+        throw new Error("Failed to generate recipe with unhealthy or invalid ingredients")
+      }
       if (!response.ok) {
         throw new Error(data.error || "Failed to generate recipe")
       }
@@ -163,11 +181,10 @@ export function RecipeGeneratorForm() {
                 <Badge
                   key={option}
                   variant={selectedDietary.includes(option) ? "default" : "outline"}
-                  className={`cursor-pointer px-3 py-2 text-sm transition-colors ${
-                    selectedDietary.includes(option)
-                      ? "bg-green-600 hover:bg-green-700 text-white"
-                      : "hover:bg-green-50 hover:border-green-300"
-                  }`}
+                  className={`cursor-pointer px-3 py-2 text-sm transition-colors ${selectedDietary.includes(option)
+                    ? "bg-green-600 hover:bg-green-700 text-white"
+                    : "hover:bg-green-50 hover:border-green-300"
+                    }`}
                   onClick={() => toggleDietary(option)}
                 >
                   {option.charAt(0).toUpperCase() + option.slice(1).replace("-", " ")}
@@ -184,11 +201,10 @@ export function RecipeGeneratorForm() {
                 <Badge
                   key={cuisine}
                   variant={selectedCuisine === cuisine ? "default" : "outline"}
-                  className={`cursor-pointer px-3 py-2 text-sm transition-colors ${
-                    selectedCuisine === cuisine
-                      ? "bg-blue-600 hover:bg-blue-700 text-white"
-                      : "hover:bg-blue-50 hover:border-blue-300"
-                  }`}
+                  className={`cursor-pointer px-3 py-2 text-sm transition-colors ${selectedCuisine === cuisine
+                    ? "bg-blue-600 hover:bg-blue-700 text-white"
+                    : "hover:bg-blue-50 hover:border-blue-300"
+                    }`}
                   onClick={() => setSelectedCuisine(selectedCuisine === cuisine ? "" : cuisine)}
                 >
                   {cuisine.charAt(0).toUpperCase() + cuisine.slice(1).replace("-", " ")}
