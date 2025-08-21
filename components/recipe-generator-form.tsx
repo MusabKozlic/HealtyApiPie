@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
@@ -22,6 +22,7 @@ export function RecipeGeneratorForm() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedRecipe, setGeneratedRecipe] = useState<Recipe | null>(null)
   const [error, setError] = useState("")
+  const recipeRef = useRef<HTMLDivElement>(null) // Ref for scrolling to the recipe
 
   const toggleDietary = (option: string) => {
     setSelectedDietary((prev) => (prev.includes(option) ? prev.filter((item) => item !== option) : [...prev, option]))
@@ -70,6 +71,11 @@ export function RecipeGeneratorForm() {
       }
 
       setGeneratedRecipe(data.recipe)
+
+      // Scroll to the recipe result
+      setTimeout(() => {
+        recipeRef.current?.scrollIntoView({ behavior: "smooth" })
+      }, 100)
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
     } finally {
@@ -220,7 +226,11 @@ export function RecipeGeneratorForm() {
       </Card>
 
       {/* Recipe Result */}
-      {generatedRecipe && <RecipeResult recipe={generatedRecipe} />}
+      {generatedRecipe && (
+        <div ref={recipeRef}>
+          <RecipeResult recipe={generatedRecipe} />
+        </div>
+      )}
     </div>
   )
 }

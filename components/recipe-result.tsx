@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Clock, Users, Flame, Share2, Bookmark, DollarSign } from "lucide-react"
 import type { Recipe } from "@/lib/supabase/client"
+import Image from "next/image"
 
 interface RecipeResultProps {
   recipe: Recipe
@@ -39,6 +40,17 @@ export function RecipeResult({ recipe }: RecipeResultProps) {
             </CardTitle>
             {recipe.description && (
               <p className="text-gray-600 text-base sm:text-lg leading-relaxed">{recipe.description}</p>
+            )}
+            {recipe.imageurl && (
+              <div className="mt-4 w-full max-w-2xl mx-auto relative aspect-video rounded-xl overflow-hidden">
+                <Image
+                  src={recipe.imageurl}
+                  alt={recipe.title}
+                  fill
+                  className="object-cover"
+                  priority={false}
+                />
+              </div>
             )}
           </div>
           <div className="flex gap-2 sm:ml-4 flex-shrink-0">
