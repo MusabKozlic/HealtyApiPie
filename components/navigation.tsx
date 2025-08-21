@@ -101,12 +101,33 @@ export function Navigation() {
               </Link>
 
               {/* Mobile auth links */}
-              <a href="/api/login" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-green-600">
-                Login
-              </a>
-              <a href="/api/signup" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-green-600">
-                Sign up
-              </a>
+              {user ? (
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-2">
+                    <img
+                      src={user.picture}
+                      alt={user.name}
+                      className="h-8 w-8 rounded-full"
+                    />
+                    <span className="text-gray-700">{user.name}</span>
+                  </div>
+                  <button
+                    className="text-left text-gray-700 hover:text-green-600"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <a href="/api/login" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-green-600">
+                    Login
+                  </a>
+                  <a href="/api/signup" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-green-600">
+                    Sign up
+                  </a>
+                </>
+              )}
             </div>
           </div>
         )}
