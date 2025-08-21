@@ -1,20 +1,19 @@
 import type React from "react"
 import type { Metadata } from "next"
-//import { Inter, Geist  } from "next/font/google"
+import { AR_One_Sans, Roboto } from "next/font/google"
 import "./globals.css"
 
-/*
-const inter = Inter({
+const arOneSans = AR_One_Sans({
   subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
+  display: "swap",   // optimizacija za FCP
+  variable: "--font-ar-one-sans", // CSS varijabla
 })
 
-const geist = Geist({
+const roboto = Roboto({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-geist",
-}) */
+  variable: "--font-roboto",
+})
 
 export const metadata: Metadata = {
   title: "Healthy Recipe Generator - AI-Powered Nutrition",
@@ -31,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="font-sans antialiased">{children}</body>
+      <body className={`${arOneSans.variable} ${roboto.variable}`}>{children}</body>
     </html>
   )
 }

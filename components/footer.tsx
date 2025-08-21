@@ -10,7 +10,7 @@ export function Footer() {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <ChefHat className="h-6 w-6 text-green-400" />
-              <span className="font-serif font-bold text-xl">HealthyRecipes</span>
+              <span className="font-bold text-xl">Nutri AI Genius</span>
             </div>
             <p className="text-gray-400 text-sm">
               AI-powered healthy recipe generation for nutritious and delicious meals.
@@ -68,7 +68,7 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm">© {new Date().getFullYear()} HealthyRecipes. All rights reserved.</p>
+          <p className="text-gray-400 text-sm">© {new Date().getFullYear()} Nutri AI Genius. All rights reserved.</p>
           <div className="flex items-center gap-1 text-gray-400 text-sm mt-4 md:mt-0">
             Made with <Heart className="h-4 w-4 text-red-400" /> for healthy living
           </div>

@@ -1,6 +1,8 @@
 import { RecipeBrowser } from "@/components/recipe-browser"
 import { Navigation } from "@/components/navigation"
 import type { Metadata } from "next"
+import { createServerClient } from "@/lib/supabase/server"
+import { Recipe } from "@/lib/supabase/client"
 
 export const metadata: Metadata = {
   title: "Browse Healthy Recipes - AI-Generated Nutritious Meals | Healthy Recipe Generator",
@@ -25,7 +27,25 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RecipesPage() {
+
+async function getInitialRecipes(): Promise<Recipe[]> {
+  const supabase = createServerClient()
+  const { data, error } = await supabase
+    .from("recipes")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .range(0, 11) // 12 per page
+
+  if (error) {
+    console.error("SSR fetch error:", error)
+    return []
+  }
+
+  return data || []
+}
+
+export default async function RecipesPage() {
+  const initialRecipes = await getInitialRecipes();
   return (
     <>
       <script
@@ -70,7 +90,7 @@ export default function RecipesPage() {
           <div className="max-w-7xl mx-auto">
             {/* Header with SEO-optimized content */}
             <div className="text-center mb-8">
-              <h1 className="font-serif text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
                 Healthy Recipe Collection
               </h1>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -79,7 +99,7 @@ export default function RecipesPage() {
               </p>
             </div>
 
-            <RecipeBrowser />
+            <RecipeBrowser initialRecipes={initialRecipes} />
           </div>
         </main>
       </div>

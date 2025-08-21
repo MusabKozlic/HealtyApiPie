@@ -67,7 +67,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
 
         <CardHeader className="pb-3 flex-shrink-0">
           <Link href={`/recipe/${recipe.id}`}>
-            <h3 className="font-serif text-lg sm:text-xl font-semibold text-gray-900 line-clamp-2 group-hover:text-green-700 transition-colors cursor-pointer leading-tight">
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 line-clamp-2 group-hover:text-green-700 transition-colors cursor-pointer leading-tight">
               {recipe.title}
             </h3>
           </Link>

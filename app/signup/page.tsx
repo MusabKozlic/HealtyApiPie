@@ -12,7 +12,7 @@ export default function SignupPage() {
         <div className="bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-4">
           <div className="text-center mb-8">
             <ChefHat className="h-12 w-12 text-green-600 mx-auto mb-4" />
-            <h1 className="text-2xl font-serif font-bold text-gray-900 mb-2">Create Account</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Create Account</h1>
             <p className="text-gray-600">Sign up to save recipes and get personalized suggestions</p>
           </div>
 

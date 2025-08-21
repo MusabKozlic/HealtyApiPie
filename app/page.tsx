@@ -47,7 +47,7 @@ export default function HomePage() {
             <div className="space-y-8">
               {/* Hero Section */}
               <div className="text-center mb-12">
-                <h1 className="font-serif text-4xl md:text-6xl font-bold text-gray-900 mb-4">
+                <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
                   Healthy Recipe Generator
                 </h1>
                 <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-8">

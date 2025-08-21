@@ -39,7 +39,7 @@ export function RecipeModal({ recipe, isOpen, onClose }: RecipeModalProps) {
         <div className="sticky top-0 bg-white border-b border-gray-200 p-4 sm:p-6 z-10">
           <div className="flex items-start justify-between">
             <div className="flex-1 pr-4">
-              <DialogTitle className="text-xl sm:text-2xl lg:text-3xl font-serif text-gray-900 mb-2 leading-tight">
+              <DialogTitle className="text-xl sm:text-2xl lg:text-3xl text-gray-900 mb-2 leading-tight">
                 {recipe.title}
               </DialogTitle>
               {recipe.description && (

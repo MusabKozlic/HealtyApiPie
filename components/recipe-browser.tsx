@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,27 +9,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Search, Filter, ChevronRight } from "lucide-react"
 import { RecipeCard } from "@/components/recipe-card"
 import type { Recipe } from "@/lib/supabase/client"
+import { DIETARY_OPTIONS, CUISINE_OPTIONS } from "@/lib/types/categories"
 
-const categories = [
-  "all",
-  "general",
-  "vegan",
-  "vegetarian",
-  "keto",
-  "paleo",
-  "gluten-free",
-  "dairy-free",
-  "low-carb",
-  "high-protein",
-  "baby-food",
-  "diabetic",
-]
+type RecipeBrowserProps = {
+  initialRecipes: Recipe[]
+}
 
-export function RecipeBrowser() {
-  const [recipes, setRecipes] = useState<Recipe[]>([])
+export function RecipeBrowser({ initialRecipes }: RecipeBrowserProps) {
+  const [recipes, setRecipes] = useState<Recipe[]>(initialRecipes)
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("all")
+  const [selectedDietaryCategory, setSelectedDietaryCategory] = useState("all")
+  const [selectedCuisineCategory, setSelectedCuisineCategory] = useState("all")
   const [currentPage, setCurrentPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
   const [error, setError] = useState("")
@@ -47,8 +37,12 @@ export function RecipeBrowser() {
         offset: ((page - 1) * recipesPerPage).toString(),
       })
 
-      if (selectedCategory !== "all") {
-        params.append("category", selectedCategory)
+      if (selectedDietaryCategory !== "all") {
+        params.append("dietary", selectedDietaryCategory)
+      }
+
+      if (selectedCuisineCategory !== "all") {
+        params.append("cuisine", selectedCuisineCategory)
       }
 
       if (searchTerm.trim()) {
@@ -80,7 +74,7 @@ export function RecipeBrowser() {
   // Initial load
   useEffect(() => {
     fetchRecipes(1, true)
-  }, [selectedCategory])
+  }, [selectedDietaryCategory, selectedCuisineCategory])
 
   // Search with debounce
   useEffect(() => {
@@ -131,16 +125,36 @@ export function RecipeBrowser() {
 
           {/* Filters */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Dietary Category Filter */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Category</label>
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <label className="text-sm font-medium text-gray-700">Dietary Preferences</label>
+              <Select value={selectedDietaryCategory} onValueChange={setSelectedDietaryCategory}>
                 <SelectTrigger className="h-12 sm:h-10">
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder="Select dietary preference" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat === "all" ? "All Categories" : cat.charAt(0).toUpperCase() + cat.slice(1).replace("-", " ")}
+                  <SelectItem value="all">All Dietary Preferences</SelectItem>
+                  {DIETARY_OPTIONS.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option.charAt(0).toUpperCase() + option.slice(1).replace("-", " ")}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Cuisine Category Filter */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Cuisine</label>
+              <Select value={selectedCuisineCategory} onValueChange={setSelectedCuisineCategory}>
+                <SelectTrigger className="h-12 sm:h-10">
+                  <SelectValue placeholder="Select cuisine" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Cuisines</SelectItem>
+                  {CUISINE_OPTIONS.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option.charAt(0).toUpperCase() + option.slice(1).replace("-", " ")}
                     </SelectItem>
                   ))}
                 </SelectContent>

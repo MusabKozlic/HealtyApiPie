@@ -24,9 +24,9 @@ export function Navigation() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 font-serif font-bold text-xl text-gray-900">
+          <Link href="/" className="flex items-center gap-2 font-bold text-xl text-gray-900">
             <ChefHat className="h-6 w-6 text-green-600" />
-            HealthyRecipes
+            Nutri AI Genius
           </Link>
 
           {/* Desktop Navigation */}

@@ -34,7 +34,7 @@ export function RecipeResult({ recipe }: RecipeResultProps) {
       <CardHeader className="pb-4">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div className="flex-1">
-            <CardTitle className="text-2xl sm:text-3xl lg:text-4xl font-serif text-gray-900 mb-2 leading-tight">
+            <CardTitle className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 mb-2 leading-tight">
               {recipe.title}
             </CardTitle>
             {recipe.description && (

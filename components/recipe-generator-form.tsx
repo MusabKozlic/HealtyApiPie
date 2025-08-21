@@ -9,32 +9,9 @@ import { Badge } from "@/components/ui/badge"
 import { Loader2, Sparkles, Users, Clock } from "lucide-react"
 import { RecipeResult } from "@/components/recipe-result"
 import type { Recipe } from "@/lib/supabase/client"
+import { DIETARY_OPTIONS } from "@/lib/types/categories"
+import { CUISINE_OPTIONS } from "@/lib/types/categories"
 
-const DIETARY_OPTIONS = [
-  "vegetarian",
-  "vegan",
-  "gluten-free",
-  "dairy-free",
-  "keto",
-  "paleo",
-  "low-carb",
-  "high-protein",
-  "mediterranean",
-  "pescatarian",
-]
-
-const CUISINE_OPTIONS = [
-  "italian",
-  "mexican",
-  "asian",
-  "mediterranean",
-  "indian",
-  "thai",
-  "american",
-  "french",
-  "japanese",
-  "middle-eastern",
-]
 
 export function RecipeGeneratorForm() {
   const [ingredients, setIngredients] = useState("")
@@ -104,7 +81,7 @@ export function RecipeGeneratorForm() {
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="font-serif text-3xl md:text-4xl font-bold text-gray-900 mb-2">Generate Your Recipe</h1>
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Generate Your Recipe</h1>
         <p className="text-lg text-gray-600">
           Tell us what you have and we'll create something delicious and budget-friendly
         </p>
