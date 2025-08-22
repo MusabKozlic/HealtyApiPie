@@ -8,6 +8,7 @@ import { DbUser } from "@/lib/types/DBUser"
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
   const [user, setUser] = useState<DbUser | null>(null)
   const dropdownRef = useRef<HTMLDivElement | null>(null)
 
@@ -17,23 +18,17 @@ export function Navigation() {
       .then((data) => setUser(data.user))
   }, [])
 
+  // close menus when clicked outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsMenuOpen(false)
+        setIsProfileMenuOpen(false)
       }
     }
-
-    if (isMenuOpen) {
-      document.addEventListener("mousedown", handleClickOutside)
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [isMenuOpen])
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   const handleLogout = () => {
     window.location.href = "/api/auth/logout"
@@ -45,7 +40,11 @@ export function Navigation() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 font-bold text-xl text-gray-900 dark:text-gray-100">
-            <ChefHat className="h-6 w-6 text-green-600" />
+            <img
+              src="/nutriAIGenie.png"
+              alt="Nutri AI Genius Logo"
+              className="h-15 w-auto"
+            />
             Nutri AI Genius
           </Link>
 
@@ -77,9 +76,10 @@ export function Navigation() {
 
               {user ? (
                 <div className="relative">
+                  {/* Trigger button */}
                   <button
                     className="flex items-center gap-2 focus:outline-none"
-                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                   >
                     <img
                       src={user.picture || "/diverse-user-avatars.png"}
@@ -88,22 +88,27 @@ export function Navigation() {
                     />
                     <span className="text-gray-700 dark:text-gray-300">{user.name}</span>
                   </button>
-                  {/* Dropdown samo za desktop */}
-                  <div className="hidden md:absolute md:right-0 md:mt-2 md:w-48 md:bg-white md:dark:bg-gray-800 md:border md:dark:border-gray-700 md:rounded-lg md:shadow-lg">
-                    <Link
-                      href={`/profile/${user.id}`}
-                      className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      Profile
-                    </Link>
-                    <button
-                      className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      onClick={handleLogout}
-                    >
-                      Logout
-                    </button>
-                  </div>
-                  {/* Mobile logout direktno */}
+
+                  {/* Dropdown for desktop */}
+                  {isProfileMenuOpen && (
+                    <div className="hidden md:absolute md:right-0 md:mt-2 md:w-48 md:bg-white md:dark:bg-gray-800 md:border md:dark:border-gray-700 md:rounded-lg md:shadow-lg md:block">
+                      <Link
+                        href={`/profile/${user.id}`}
+                        className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        onClick={() => setIsProfileMenuOpen(false)}
+                      >
+                        Profile
+                      </Link>
+                      <button
+                        className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        onClick={handleLogout}
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Mobile options always visible inside menu */}
                   <div className="flex flex-col md:hidden gap-2 mt-2">
                     <Link
                       href={`/profile/${user.id}`}

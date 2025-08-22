@@ -105,26 +105,30 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
           {/* Recipe Meta */}
           <div className="flex items-center justify-between text-sm text-gray-600">
             <div className="flex items-center gap-3 flex-wrap">
-              {recipe.calories && (
+              {recipe.calories && recipe.calories !== null && (
                 <div className="flex items-center gap-1">
                   <Flame className="h-4 w-4 text-orange-500 flex-shrink-0" />
                   <span className="whitespace-nowrap">{recipe.calories}</span>
                 </div>
               )}
-              {recipe.budget && (
+              {recipe.budget && recipe.budget !== null && (
                 <div className="flex items-center gap-1">
                   <DollarSign className="h-4 w-4 text-green-500 flex-shrink-0" />
                   <span className="whitespace-nowrap">${recipe.budget}</span>
                 </div>
               )}
-              <div className="flex items-center gap-1">
-                <Clock className="h-4 w-4 text-blue-500 flex-shrink-0" />
-                <span className="whitespace-nowrap">30 min</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Users className="h-4 w-4 text-green-500 flex-shrink-0" />
-                <span className="whitespace-nowrap">2-4</span>
-              </div>
+              { recipe.cookingTime && recipe.cookingTime !== null && (
+                <div className="flex items-center gap-1">
+                  <Clock className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                  <span className="whitespace-nowrap">{recipe.cookingTime} min</span>
+                </div>
+              )}
+              {recipe.servings && recipe.servings !== null && (
+                <div className="flex items-center gap-1">
+                  <Users className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  <span className="whitespace-nowrap">{recipe.servings} servings</span>
+                </div>
+              )}
             </div>
           </div>
 

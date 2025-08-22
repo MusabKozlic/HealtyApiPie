@@ -24,6 +24,8 @@ export type Recipe = {
   nutrition: Record<string, any> | null
   category: string | null
   budget?: string | number
+  cookingTime?: string | number
+  servings?: string | number
   language: string
   created_at: string
   updated_at: string

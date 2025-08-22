@@ -67,26 +67,30 @@ export function RecipeResult({ recipe }: RecipeResultProps) {
 
         {/* Recipe Meta Info */}
         <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-4 pt-4 border-t border-gray-100">
-          {recipe.calories && (
+          {recipe.calories && recipe.calories != null && (
             <div className="flex items-center gap-1 text-sm text-gray-600">
               <Flame className="h-4 w-4 text-orange-500 flex-shrink-0" />
               <span className="whitespace-nowrap">{recipe.calories} calories</span>
             </div>
           )}
-          {recipe.budget && (
+          {recipe.budget && recipe.budget !== null && (
             <div className="flex items-center gap-1 text-sm text-gray-600">
               <DollarSign className="h-4 w-4 text-green-500 flex-shrink-0" />
               <span className="whitespace-nowrap">${recipe.budget} per serving</span>
             </div>
           )}
-          <div className="flex items-center gap-1 text-sm text-gray-600">
-            <Clock className="h-4 w-4 text-blue-500 flex-shrink-0" />
-            <span className="whitespace-nowrap">30 min prep</span>
-          </div>
-          <div className="flex items-center gap-1 text-sm text-gray-600">
-            <Users className="h-4 w-4 text-green-500 flex-shrink-0" />
-            <span className="whitespace-nowrap">2-4 servings</span>
-          </div>
+          {recipe.cookingTime && recipe.cookingTime !== null && (
+            <div className="flex items-center gap-1 text-sm text-gray-600">
+              <Clock className="h-4 w-4 text-blue-500 flex-shrink-0" />
+              <span className="whitespace-nowrap">${recipe.cookingTime} min</span>
+            </div>
+          )}
+          {recipe.servings && recipe.servings !== null && (
+            <div className="flex items-center gap-1 text-sm text-gray-600">
+              <Users className="h-4 w-4 text-green-500 flex-shrink-0" />
+              <span className="whitespace-nowrap">{recipe.servings} servings</span>
+            </div>
+          )}
           {recipe.category && (
             <Badge variant="secondary" className="capitalize">
               {recipe.category}

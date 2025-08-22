@@ -9,7 +9,11 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <ChefHat className="h-6 w-6 text-green-400" />
+              <img
+              src="/nutriAIGenie.png"
+              alt="Nutri AI Genius Logo"
+              className="h-15 w-auto"
+            />
               <span className="font-bold text-xl">Nutri AI Genius</span>
             </div>
             <p className="text-gray-400 text-sm">

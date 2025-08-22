@@ -23,6 +23,8 @@ interface AIRecipeResponse {
   instructions: string[]
   calories: string | number
   budget?: string | number
+  servings?: string | number
+  cookingTime?: string | number
   imageUrl?: string | null
   nutrition: {
     protein: string
@@ -77,6 +79,8 @@ CRITICAL REQUIREMENTS:
   ],
   "calories": 450,                          // Estimated calories per serving, integer only
   "budget": 8.50,                           // Estimated cost per serving in USD (number only)
+  "cookingTime": 30,                         // Preparation time in minutes (integer only)
+  "servings": 4,                           // Number of servings (integer only)
   "nutrition": {                            // Nutritional values per serving
     "protein": "25g",                       
     "carbs": "40g",                         
@@ -234,6 +238,8 @@ CRITICAL REQUIREMENTS:
         calories: recipeData.calories,
         budget: recipeData.budget,
         nutrition: recipeData.nutrition,
+        cookingTime: recipeData.cookingTime,
+        servings: recipeData.servings,
         category,
         language: "en", // Always English now
         imageurl: recipeData.imageUrl || null,
@@ -305,6 +311,8 @@ function normalizeRecipe(data: any): AIRecipeResponse {
     instructions,
     calories: typeof data.calories === "number" ? data.calories : String(data.calories || ""),
     budget: typeof data.budget === "number" ? data.budget : String(data.budget || ""),
+    servings: typeof data.servings === "number" ? data.servings : String(data.servings || ""),
+    cookingTime: typeof data.cookingTime === "number" ? data.cookingTime : String(data.cookingTime || ""),
     nutrition: data.nutrition || {},
   }
 }
