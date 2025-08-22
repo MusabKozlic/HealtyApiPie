@@ -8,6 +8,7 @@ interface RecipeRequest {
   category?: string
   servings?: number
   cookingTime?: number
+  userId: string
 }
 
 interface Ingredient {
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = createServerClient()
 
-    const { ingredients, category = "general", servings, cookingTime }: RecipeRequest = await request.json()
+    const { ingredients, category = "general", servings, cookingTime, userId }: RecipeRequest = await request.json()
 
     if (!ingredients || ingredients.trim().length === 0) {
       return NextResponse.json({ error: "At least one parameter is required" }, { status: 400 })
@@ -232,6 +233,7 @@ CRITICAL REQUIREMENTS:
         category,
         language: "en", // Always English now
         imageurl: recipeData.imageUrl || null,
+        created_by: userId,
       })
       .select()
       .single()

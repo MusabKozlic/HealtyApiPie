@@ -16,6 +16,7 @@ interface RecipeCardProps {
 
 export function RecipeCard({ recipe }: RecipeCardProps) {
   const [showModal, setShowModal] = useState(false)
+  const [isBookmarked, setIsBookmarked] = useState(recipe.isSaved || false);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -23,6 +24,18 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
       month: "short",
       day: "numeric",
     })
+  }
+
+  const handleBookmark = async () => {
+    try {
+      const res = await fetch(`/api/recipes/${recipe.id}/bookmark`, { method: "POST" })
+      const data = await res.json()
+      if (data.success) {
+        setIsBookmarked(!isBookmarked);
+      }
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   return (
@@ -47,12 +60,24 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
           {/* Gradient overlay for text readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
 
-          {/* Bookmark button */}
+          {/* Bookmark button 
           <div className="absolute top-3 right-3">
-            <Button variant="ghost" size="sm" className="bg-white/80 hover:bg-white p-2">
-              <Bookmark className="h-4 w-4" />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="bg-white/80 hover:bg-white p-2"
+              onClick={handleBookmark}
+            >
+              {
+                isBookmarked ? (
+                  <Bookmark className="h-4 w-4 fill-current text-green-500" />
+                ) : (
+                  <Bookmark className="h-4 w-4" />
+                )
+              }
             </Button>
           </div>
+          */}
 
           {/* Category badge */}
           <div className="absolute bottom-3 left-3">

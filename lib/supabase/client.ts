@@ -28,4 +28,5 @@ export type Recipe = {
   created_at: string
   updated_at: string
   imageurl?: string
+  isSaved?: boolean
 }

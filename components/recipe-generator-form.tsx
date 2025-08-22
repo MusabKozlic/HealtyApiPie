@@ -76,6 +76,7 @@ export function RecipeGeneratorForm() {
           category: `${category}, ${cuisine} cuisine`,
           servings: servings ? Number.parseInt(servings) : undefined,
           cookingTime: cookingTime ? Number.parseInt(cookingTime) : undefined,
+          userId: user.id,
         }),
       })
 

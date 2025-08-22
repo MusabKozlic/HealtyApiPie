@@ -37,30 +37,11 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="font-semibold text-lg">Support</h3>
             <div className="space-y-2">
-              <Link href="/help" className="block text-gray-400 hover:text-white transition-colors text-sm">
-                Help Center
-              </Link>
               <Link href="/contact" className="block text-gray-400 hover:text-white transition-colors text-sm">
                 Contact Us
               </Link>
               <Link href="/feedback" className="block text-gray-400 hover:text-white transition-colors text-sm">
                 Feedback
-              </Link>
-            </div>
-          </div>
-
-          {/* Legal */}
-          <div className="space-y-4">
-            <h3 className="font-semibold text-lg">Legal</h3>
-            <div className="space-y-2">
-              <Link href="/privacy" className="block text-gray-400 hover:text-white transition-colors text-sm">
-                Privacy Policy
-              </Link>
-              <Link href="/terms" className="block text-gray-400 hover:text-white transition-colors text-sm">
-                Terms of Service
-              </Link>
-              <Link href="/cookies" className="block text-gray-400 hover:text-white transition-colors text-sm">
-                Cookie Policy
               </Link>
             </div>
           </div>
@@ -70,7 +51,7 @@ export function Footer() {
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">© {new Date().getFullYear()} Nutri AI Genius. All rights reserved.</p>
           <div className="flex items-center gap-1 text-gray-400 text-sm mt-4 md:mt-0">
-            Made with <Heart className="h-4 w-4 text-red-400" /> for healthy living
+            Made with <Heart className="h-4 w-4 text-red-400" /> for healthy life
           </div>
         </div>
       </div>
