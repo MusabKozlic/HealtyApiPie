@@ -12,7 +12,6 @@ export function Navigation() {
   const dropdownRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    // Load user info
     fetch("/api/auth/me")
       .then((res) => res.json())
       .then((data) => setUser(data.user))
@@ -50,35 +49,50 @@ export function Navigation() {
             Nutri AI Genius
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
-            <Link href="/recipes" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition-colors">
-              Browse Recipes
-            </Link>
-            <Link href="/generate" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition-colors">
-              Generate Recipe
-            </Link>
+          {/* Mobile toggle button */}
+          <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </Button>
 
-            {/* Auth buttons */}
-            {user ? (
-              <div className="relative" ref={dropdownRef}>
-                <button
-                  className="flex items-center gap-2 focus:outline-none"
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
-                >
-                  <img
-                    src={user.picture || "/diverse-user-avatars.png"}
-                    alt={user.name || "User Avatar"}
-                    className="h-8 w-8 rounded-full"
-                  />
-                  <span className="text-gray-700 dark:text-gray-300">{user.name}</span>
-                </button>
-                {isMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg shadow-lg">
+          {/* Menu links */}
+          <div
+            ref={dropdownRef}
+            className={`${isMenuOpen ? "block" : "hidden"} absolute top-16 left-0 w-full bg-white dark:bg-gray-900 border-t dark:border-gray-800 md:static md:block md:w-auto md:border-0`}
+          >
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 p-4 md:p-0">
+              <Link
+                href="/recipes"
+                className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Browse Recipes
+              </Link>
+              <Link
+                href="/generate"
+                className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Generate Recipe
+              </Link>
+
+              {user ? (
+                <div className="relative">
+                  <button
+                    className="flex items-center gap-2 focus:outline-none"
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  >
+                    <img
+                      src={user.picture || "/diverse-user-avatars.png"}
+                      alt={user.name || "User Avatar"}
+                      className="h-8 w-8 rounded-full"
+                    />
+                    <span className="text-gray-700 dark:text-gray-300">{user.name}</span>
+                  </button>
+                  {/* Dropdown samo za desktop */}
+                  <div className="hidden md:absolute md:right-0 md:mt-2 md:w-48 md:bg-white md:dark:bg-gray-800 md:border md:dark:border-gray-700 md:rounded-lg md:shadow-lg">
                     <Link
                       href={`/profile/${user.id}`}
                       className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      onClick={() => setIsMenuOpen(false)}
                     >
                       Profile
                     </Link>
@@ -89,28 +103,43 @@ export function Navigation() {
                       Logout
                     </button>
                   </div>
-                )}
-              </div>
-            ) : (
-              <>
-                <Button variant="ghost" size="sm" onClick={() => (window.location.href = "/api/login")}>
-                  Login
-                </Button>
-                <Button
-                  size="sm"
-                  className="bg-green-600 text-white hover:bg-green-700"
-                  onClick={() => (window.location.href = "/api/signup")}
-                >
-                  Sign up
-                </Button>
-              </>
-            )}
+                  {/* Mobile logout direktno */}
+                  <div className="flex flex-col md:hidden gap-2 mt-2">
+                    <Link
+                      href={`/profile/${user.id}`}
+                      className="text-gray-700 dark:text-gray-300 hover:text-green-600"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Profile
+                    </Link>
+                    <button
+                      className="text-left text-gray-700 dark:text-gray-300 hover:text-green-600"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col md:flex-row gap-2 md:gap-4 w-full md:w-auto">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => (window.location.href = "/api/login")}
+                  >
+                    Login
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="bg-green-600 text-white hover:bg-green-700"
+                    onClick={() => (window.location.href = "/api/signup")}
+                  >
+                    Sign up
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
-
-          {/* Mobile Menu Button */}
-          <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
         </div>
       </div>
     </nav>
