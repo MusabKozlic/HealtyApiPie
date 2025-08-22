@@ -93,7 +93,11 @@ CRITICAL REQUIREMENTS:
 - ALL TEXT must be in English
 - Respond ONLY with the JSON, no markdown blocks or extra text
 - If user specified ingredients, do NOT add others except seasonings
-    `
+- If user specified cooking time and serving size, 
+  adjust the recipe accordingly,
+  for example if user specified 15 minutes cooking time and 4 servings, 
+  the recipe should reflect that or to be very closely.
+  `
 
     console.log("Generating recipe with prompt:", prompt.substring(0, 200) + "...")
 
@@ -153,7 +157,7 @@ CRITICAL REQUIREMENTS:
       throw new Error("Invalid AI response format")
     }
 
-    if(recipeData.title === "Cannot generate healthy recipe") {
+    if (recipeData.title === "Cannot generate healthy recipe") {
       return NextResponse.json(recipeData, { status: 400 })
     }
 

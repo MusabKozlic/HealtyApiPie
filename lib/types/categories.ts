@@ -24,6 +24,7 @@ export const DIETARY_OPTIONS = [
   "low-calorie",
   "pregnancy-friendly",
   "baby-toddler",
+  "baby-food",
 
   // ⏱️ Lifestyle
   "quick-easy",
