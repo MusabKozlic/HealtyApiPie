@@ -6,12 +6,18 @@ import { Button } from "@/components/ui/button"
 import { Clock, Users, Flame, Share2, Bookmark, DollarSign } from "lucide-react"
 import type { Recipe } from "@/lib/supabase/client"
 import Image from "next/image"
+import { useUser } from "@/context/UserContext"
+import { useState } from "react"
 
 interface RecipeResultProps {
   recipe: Recipe
 }
 
 export function RecipeResult({ recipe }: RecipeResultProps) {
+  const [isBookmarked, setIsBookmarked] = useState(recipe.isSaved || false);
+  const [bookmarkLoading, setBookmarkLoading] = useState(false);
+  const { user } = useUser();
+
   const handleShare = async () => {
     if (navigator.share) {
       try {
@@ -27,6 +33,24 @@ export function RecipeResult({ recipe }: RecipeResultProps) {
     } else {
       // Fallback to copying to clipboard
       navigator.clipboard.writeText(window.location.href)
+    }
+  }
+
+  const handleBookmark = async () => {
+    if (bookmarkLoading) return // prevent spam
+    setBookmarkLoading(true)
+
+    try {
+        const res = await fetch(`/api/recipes/${recipe.id}/bookmark`, { method: "POST" })
+        const data = await res.json()
+        if (data.success) {
+          setIsBookmarked(!isBookmarked);
+        }
+
+      setBookmarkLoading(false)
+    } catch (err) {
+      console.error(err)
+      setBookmarkLoading(false)
     }
   }
 
@@ -58,10 +82,22 @@ export function RecipeResult({ recipe }: RecipeResultProps) {
               <Share2 className="h-4 w-4 sm:mr-0 mr-2" />
               <span className="sm:hidden">Share</span>
             </Button>
-            <Button variant="outline" size="sm" className="flex-1 sm:flex-none bg-transparent">
-              <Bookmark className="h-4 w-4 sm:mr-0 mr-2" />
-              <span className="sm:hidden">Save</span>
-            </Button>
+            <div className="flex gap-2 sm:ml-4 flex-shrink-0 relative">
+              {user && <Button
+                variant="outline"
+                size="sm"
+                className={`bg-white/80 hover:bg-white p-2 transition-all duration-300 ${bookmarkLoading ? "cursor-not-allowed opacity-70 animate-pulse" : ""
+                  }`}
+                onClick={handleBookmark}
+                disabled={bookmarkLoading}
+              >
+                {isBookmarked ? (
+                  <Bookmark className="h-4 w-4 fill-current text-green-500" />
+                ) : (
+                  <Bookmark className="h-4 w-4" />
+                )}
+              </Button>}
+            </div>
           </div>
         </div>
 

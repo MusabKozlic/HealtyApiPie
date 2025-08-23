@@ -44,9 +44,6 @@ export function Footer() {
               <Link href="/contact" className="block text-gray-400 hover:text-white transition-colors text-sm">
                 Contact Us
               </Link>
-              <Link href="/feedback" className="block text-gray-400 hover:text-white transition-colors text-sm">
-                Feedback
-              </Link>
             </div>
           </div>
         </div>

@@ -2,6 +2,9 @@ import type React from "react"
 import type { Metadata } from "next"
 import { AR_One_Sans, Roboto } from "next/font/google"
 import "./globals.css"
+import { User } from "lucide-react"
+import { UserProvider } from "@/context/UserContext"
+import { Footer } from "@/components/footer"
 
 const arOneSans = AR_One_Sans({
   subsets: ["latin"],
@@ -30,7 +33,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${arOneSans.variable} ${roboto.variable}`}>{children}</body>
+      <body className={`${arOneSans.variable} ${roboto.variable}`}>
+        <UserProvider>
+          {children}
+        </UserProvider>
+      </body>
     </html>
   )
 }

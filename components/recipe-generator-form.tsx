@@ -115,7 +115,7 @@ export function RecipeGeneratorForm() {
       {/* Input Form */}
       <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-2xl font-serif">
+          <CardTitle className="flex items-center gap-2 text-2xl">
             <Sparkles className="h-6 w-6 text-green-600" />
             Recipe Details
           </CardTitle>
@@ -124,7 +124,7 @@ export function RecipeGeneratorForm() {
           {/* Ingredients Input */}
           <div className="space-y-2">
             <label htmlFor="ingredients" className="text-sm font-medium text-gray-700">
-              Available Ingredients (Optional)
+              Available Ingredients
             </label>
             <Textarea
               id="ingredients"
@@ -143,7 +143,7 @@ export function RecipeGeneratorForm() {
             <div className="space-y-2">
               <label htmlFor="servings" className="text-sm font-medium text-gray-700 flex items-center gap-1">
                 <Users className="h-4 w-4" />
-                Number of Servings (Optional)
+                Number of Servings
               </label>
               <Input
                 id="servings"
@@ -159,7 +159,7 @@ export function RecipeGeneratorForm() {
             <div className="space-y-2">
               <label htmlFor="cookingTime" className="text-sm font-medium text-gray-700 flex items-center gap-1">
                 <Clock className="h-4 w-4" />
-                Cooking Time (Optional)
+                Cooking Time
               </label>
               <Input
                 id="cookingTime"
@@ -176,7 +176,7 @@ export function RecipeGeneratorForm() {
 
           {/* Dietary Preferences */}
           <div className="space-y-3">
-            <label className="text-sm font-medium text-gray-700">Dietary Preferences (Optional)</label>
+            <label className="text-sm font-medium text-gray-700">Dietary Preferences</label>
             <div className="flex flex-wrap gap-2">
               {DIETARY_OPTIONS.map((option) => (
                 <Badge
@@ -196,7 +196,7 @@ export function RecipeGeneratorForm() {
 
           {/* Cuisine Type */}
           <div className="space-y-3">
-            <label className="text-sm font-medium text-gray-700">Cuisine Type (Optional)</label>
+            <label className="text-sm font-medium text-gray-700">Cuisine Type</label>
             <div className="flex flex-wrap gap-2">
               {CUISINE_OPTIONS.map((cuisine) => (
                 <Badge

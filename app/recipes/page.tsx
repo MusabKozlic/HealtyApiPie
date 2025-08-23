@@ -3,6 +3,9 @@ import { Navigation } from "@/components/navigation"
 import type { Metadata } from "next"
 import { createServerClient } from "@/lib/supabase/server"
 import { Recipe } from "@/lib/supabase/client"
+import { get } from "http"
+import { getServerUserId } from "@/lib/serverUser"
+import { Footer } from "@/components/footer"
 
 export const metadata: Metadata = {
   title: "Browse Healthy Recipes - AI-Generated Nutritious Meals | Healthy Recipe Generator",
@@ -27,21 +30,48 @@ export const metadata: Metadata = {
   },
 }
 
+type DbRecipe = Omit<Recipe, "isSaved">
+type RowWithSaved = DbRecipe & { saved?: { isSaved: boolean }[] | null }
 
 async function getInitialRecipes(): Promise<Recipe[]> {
   const supabase = createServerClient()
-  const { data, error } = await supabase
-    .from("recipes")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .range(0, 11) // 12 per page
+  const userId = await getServerUserId()
 
-  if (error) {
+  // 1. Povuci recepte
+  const { data: recipes, error } = await supabase
+    .from("recipes")
+    .select(`
+      id, title, description, ingredients, instructions, calories, nutrition, category,
+      budget, cookingTime, servings, language, created_at, updated_at, imageurl
+    `)
+    .order("created_at", { ascending: false })
+    .range(0, 11)
+
+  if (error || !recipes) {
     console.error("SSR fetch error:", error)
     return []
   }
 
-  return data || []
+  // 2. Ako nema usera, vrati samo recepte
+  if (!userId) return recipes
+
+  // 3. Povuci saved recepte za ovog usera
+  const { data: saved, error: savedErr } = await supabase
+    .from("user_saved_recipes")
+    .select("recipe_id, isSaved")
+    .eq("user_id", userId)
+
+  if (savedErr) {
+    console.error("SSR fetch saved error:", savedErr)
+  }
+
+  const savedMap = new Map(saved?.map((s) => [s.recipe_id, s.isSaved]))
+
+  // 4. Merge recepata i saved statusa
+  return recipes.map((r) => ({
+    ...r,
+    isSaved: savedMap.get(r.id) ?? false,
+  }))
 }
 
 export default async function RecipesPage() {
@@ -102,6 +132,7 @@ export default async function RecipesPage() {
             <RecipeBrowser initialRecipes={initialRecipes} />
           </div>
         </main>
+        <Footer />
       </div>
     </>
   )

@@ -30,7 +30,7 @@ export async function POST(req: Request, { params }: { params: { recipeId: strin
 
         const userId = dbUser.id;
 
-        const { recipeId } = params
+        const { recipeId } = await params;
 
         const { data: existing, error: fetchError } = await supabase
             .from("user_saved_recipes")
@@ -44,7 +44,9 @@ export async function POST(req: Request, { params }: { params: { recipeId: strin
         }
 
         const newIsSaved = existing ? !existing.isSaved : true
-
+        console.log("New isSaved value:", newIsSaved)
+        console.log("User ID:", userId, "Recipe ID:", recipeId)
+        console.log("existing record:", existing)
         const { error: upsertError } = await supabase
             .from("user_saved_recipes")
             .upsert({

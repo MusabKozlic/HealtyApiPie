@@ -10,6 +10,7 @@ import { Search, Filter, ChevronRight } from "lucide-react"
 import { RecipeCard } from "@/components/recipe-card"
 import type { Recipe } from "@/lib/supabase/client"
 import { DIETARY_OPTIONS, CUISINE_OPTIONS } from "@/lib/types/categories"
+import { DbUser } from "@/lib/types/DBUser"
 
 type RecipeBrowserProps = {
   initialRecipes: Recipe[]
@@ -24,8 +25,16 @@ export function RecipeBrowser({ initialRecipes }: RecipeBrowserProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
   const [error, setError] = useState("")
+  const [user, setUser] = useState<DbUser | null>(null)
 
-  const recipesPerPage = 12
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => setUser(data.user))
+  }, [])
+  
+  const recipesPerPage = 12;
 
   const fetchRecipes = async (page = 1, reset = false) => {
     try {
@@ -47,6 +56,9 @@ export function RecipeBrowser({ initialRecipes }: RecipeBrowserProps) {
 
       if (searchTerm.trim()) {
         params.append("search", searchTerm.trim())
+      }
+      if (user) {
+        params.append("userId", user.id)
       }
 
       const response = await fetch(`/api/recipes?${params}`)

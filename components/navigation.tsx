@@ -128,18 +128,11 @@ export function Navigation() {
               ) : (
                 <div className="flex flex-col md:flex-row gap-2 md:gap-4 w-full md:w-auto">
                   <Button
-                    variant="ghost"
+                    variant="default"
                     size="sm"
                     onClick={() => (window.location.href = "/api/login")}
                   >
-                    Login
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="bg-green-600 text-white hover:bg-green-700"
-                    onClick={() => (window.location.href = "/api/signup")}
-                  >
-                    Sign up
+                    Login / Sign Up
                   </Button>
                 </div>
               )}

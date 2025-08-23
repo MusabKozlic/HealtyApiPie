@@ -4,6 +4,16 @@
 /* Dark variant */
 @custom-variant dark (&:is(.dark *));
 
+
+* {
+  cursor: default;
+}
+
+a, button {
+  cursor: pointer;
+}
+
+
 /* Global color tokens (light mode) */
 :root {
   --background: oklch(1 0 0);

@@ -6,9 +6,7 @@ import type { Metadata } from "next"
 import { RecipeStructuredData } from "@/components/recipe-structured-data"
 
 interface RecipePageProps {
-  params: {
-    id: string
-  }
+  params: Promise<{ id: string }>
 }
 
 async function getRecipe(id: string) {
@@ -23,7 +21,8 @@ async function getRecipe(id: string) {
 }
 
 export async function generateMetadata({ params }: RecipePageProps): Promise<Metadata> {
-  const recipe = await getRecipe(params.id)
+  const { id } = await params;
+  const recipe = await getRecipe(id)
 
   if (!recipe) {
     return {
@@ -73,7 +72,8 @@ export async function generateMetadata({ params }: RecipePageProps): Promise<Met
 }
 
 export default async function RecipePage({ params }: RecipePageProps) {
-  const recipe = await getRecipe(params.id)
+  const { id } = await params;
+  const recipe = await getRecipe(id)
 
   if (!recipe) {
     notFound()
