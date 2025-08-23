@@ -10,7 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .select("id, updated_at")
     .order("created_at", { ascending: false })
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://v0-recipe-generator-app-gamma.vercel.app/"
+  const baseUrl = "https://www.nutriaigenius.com/"
 
   const staticPages = [
     {
@@ -31,8 +31,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     recipes?.map((recipe) => ({
       url: `${baseUrl}/recipe/${recipe.id}`,
       lastModified: new Date(recipe.updated_at),
-      changeFrequency: "weekly" as const,
-      priority: 0.6,
+      changeFrequency: "daily" as const,
+      priority: 0.9,
     })) || []
 
   return [...staticPages, ...recipePages]

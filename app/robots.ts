@@ -1,13 +1,13 @@
 import type { MetadataRoute } from "next"
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://v0-recipe-generator-app-gamma.vercel.app/"
+  const baseUrl = "https://www.nutriaigenius.com/"
 
   return {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/", "/admin/"],
+      disallow: ["/api/", "/admin/", "profile"],
     },
     sitemap: `${baseUrl}/sitemap.xml`,
   }
