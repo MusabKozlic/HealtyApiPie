@@ -6,10 +6,11 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 interface RecipeGridProps {
-  recipes: Recipe[]
+  recipes: Recipe[],
+  tab?: string
 }
 
-export function RecipeGrid({ recipes: initialRecipes }: RecipeGridProps) {
+export function RecipeGrid({ recipes: initialRecipes, tab }: RecipeGridProps) {
   const [recipes, setRecipes] = useState(initialRecipes)
   const router = useRouter()
 
@@ -32,11 +33,16 @@ export function RecipeGrid({ recipes: initialRecipes }: RecipeGridProps) {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
       {recipes.map((recipe) => (
+        tab === "saved" ?
         <RecipeCard 
           key={recipe.id} 
           recipe={recipe} 
           onBookmark={handleBookmark}
           dissableBookmark={true}
+        /> :
+        <RecipeCard 
+          key={recipe.id} 
+          recipe={recipe} 
         />
       ))}
     </div>

@@ -101,7 +101,7 @@ export default async function ProfilePage({ params }: { params: { id: string } }
             {!savedRecipes || savedRecipes.length === 0 ? (
               <p className="text-gray-500">No saved recipes yet.</p>
             ) : (
-              <RecipeGrid recipes={savedRecipes} />
+              <RecipeGrid recipes={savedRecipes} tab={"saved"} />
             )}
           </TabsContent>
         </Tabs>
