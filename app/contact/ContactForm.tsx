@@ -12,7 +12,7 @@ export default function ContactForm() {
     const [message, setMessage] = useState("")
 
     const handleSendEmail = () => {
-        const mailto = `mailto:support@example.com?subject=${encodeURIComponent(
+        const mailto = `mailto:support@nutriaigenius.com?subject=${encodeURIComponent(
             subject
         )}&body=${encodeURIComponent(message)}`
         window.location.href = mailto

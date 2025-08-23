@@ -37,6 +37,9 @@ export default function AboutPage() {
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
             About Us
           </h1>
+          <h3 className="text-2xl font-semibold text-gray-800 mb-6">
+            Healty. Personal. Powered by AI.
+          </h3>
           <p className="text-lg text-gray-700 mb-6">
             At Healthy Recipe Generator, our mission is to make nutritious cooking easy, fun, and accessible for everyone.
             We use advanced AI to generate recipes that are tailored to your dietary preferences and nutritional needs.

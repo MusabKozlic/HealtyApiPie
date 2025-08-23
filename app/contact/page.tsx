@@ -20,16 +20,16 @@ export default async function ContactPage() {
           {/* Emails */}
           <div className="flex flex-col md:flex-row justify-around mb-12 gap-6">
             <div className="bg-white/80 p-6 rounded-xl shadow-md text-center">
+              <h3 className="font-semibold text-gray-800">Musab Kozlić</h3>
+              <p className="text-gray-600">kozlic8@gmail.com</p>
+            </div>
+            <div className="bg-white/80 p-6 rounded-xl shadow-md text-center">
+              <h3 className="font-semibold text-gray-800">Belma Dedić-Kozlić</h3>
+              <p className="text-gray-600">deedic.b@gmail.com</p>
+            </div>
+            <div className="bg-white/80 p-6 rounded-xl shadow-md text-center">
               <h3 className="font-semibold text-gray-800">Support</h3>
-              <p className="text-gray-600">support@example.com</p>
-            </div>
-            <div className="bg-white/80 p-6 rounded-xl shadow-md text-center">
-              <h3 className="font-semibold text-gray-800">Info</h3>
-              <p className="text-gray-600">info@example.com</p>
-            </div>
-            <div className="bg-white/80 p-6 rounded-xl shadow-md text-center">
-              <h3 className="font-semibold text-gray-800">General</h3>
-              <p className="text-gray-600">hello@example.com</p>
+              <p className="text-gray-600">support@nutriaigenius.com</p>
             </div>
           </div>
 
