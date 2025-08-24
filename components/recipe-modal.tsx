@@ -23,11 +23,9 @@ export function RecipeModal({ recipe, isOpen, onClose }: RecipeModalProps) {
           url: window.location.href,
         })
       } catch (err) {
-        // Fallback to copying to clipboard
         navigator.clipboard.writeText(window.location.href)
       }
     } else {
-      // Fallback to copying to clipboard
       navigator.clipboard.writeText(window.location.href)
     }
   }
@@ -35,7 +33,6 @@ export function RecipeModal({ recipe, isOpen, onClose }: RecipeModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[95vh] w-[95vw] sm:w-full overflow-y-auto p-0">
-        {/* Custom header for better mobile experience */}
         <div className="sticky top-0 bg-white border-b border-gray-200 p-4 sm:p-6 z-10">
           <div className="flex items-start justify-between">
             <div className="flex-1 pr-4">
@@ -59,7 +56,6 @@ export function RecipeModal({ recipe, isOpen, onClose }: RecipeModalProps) {
             </div>
           </div>
 
-          {/* Recipe Meta Info */}
           <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-4 pt-4 border-t border-gray-100">
             {recipe.calories && (
               <div className="flex items-center gap-1 text-sm text-gray-600">
@@ -82,7 +78,6 @@ export function RecipeModal({ recipe, isOpen, onClose }: RecipeModalProps) {
             )}
           </div>
 
-          {/* Mobile action buttons */}
           <div className="flex gap-2 mt-4 sm:hidden">
             <Button variant="outline" size="sm" onClick={handleShare} className="flex-1 bg-transparent">
               <Share2 className="h-4 w-4 mr-2" />
@@ -96,7 +91,6 @@ export function RecipeModal({ recipe, isOpen, onClose }: RecipeModalProps) {
         </div>
 
         <div className="p-4 sm:p-6 space-y-6 sm:space-y-8">
-          {/* Ingredients */}
           <div>
             <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-900">Ingredients</h3>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
@@ -109,7 +103,6 @@ export function RecipeModal({ recipe, isOpen, onClose }: RecipeModalProps) {
             </div>
           </div>
 
-          {/* Instructions */}
           <div>
             <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-900">Instructions</h3>
             <div className="prose prose-gray max-w-none">
@@ -119,7 +112,6 @@ export function RecipeModal({ recipe, isOpen, onClose }: RecipeModalProps) {
             </div>
           </div>
 
-          {/* Nutrition Info */}
           {recipe.nutrition && (
             <div>
               <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-900">Nutrition Information</h3>

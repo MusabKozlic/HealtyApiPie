@@ -30,7 +30,6 @@ export default function AboutPage() {
       <Navigation />
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto text-center">
-            {/* Hero Icon */}
           <div className="flex justify-center">
             <Leaf className="w-16 h-16 text-green-500 animate-bounce" />
           </div>

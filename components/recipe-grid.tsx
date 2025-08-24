@@ -23,7 +23,7 @@ export function RecipeGrid({ recipes: initialRecipes, tab }: RecipeGridProps) {
       
       if (data.success) {
         setRecipes(prev => prev.filter(recipe => recipe.id !== recipeId))
-        router.refresh() // Trigger a refresh of the server component
+        router.refresh() 
       }
     } catch (err) {
       console.error(err)

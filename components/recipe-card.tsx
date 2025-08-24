@@ -33,7 +33,7 @@ export function RecipeCard({ recipe, onBookmark, dissableBookmark }: RecipeCardP
   }
 
   const handleBookmark = async () => {
-    if (bookmarkLoading) return // prevent spam
+    if (bookmarkLoading) return
     setBookmarkLoading(true)
 
     try {
@@ -60,9 +60,7 @@ export function RecipeCard({ recipe, onBookmark, dissableBookmark }: RecipeCardP
   return (
     <>
       <Card className="group hover:shadow-xl transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm overflow-hidden h-full flex flex-col">
-        {/* Recipe Image Placeholder */}
         <div className="h-40 sm:h-48 relative overflow-hidden">
-          {/* Klikabilna slika */}
           <Link href={`/recipe/${recipe.id}`} className="absolute inset-0 z-10 block">
             {recipe.imageurl ? (
               <Image
@@ -78,10 +76,8 @@ export function RecipeCard({ recipe, onBookmark, dissableBookmark }: RecipeCardP
             )}
           </Link>
 
-          {/* Overlay ne blokira klik */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none z-20" />
 
-          {/* Bookmark dugme iznad overlaya */}
           <div className="absolute top-3 right-3 z-30">
             {user && <Button
               variant="ghost"
@@ -100,7 +96,6 @@ export function RecipeCard({ recipe, onBookmark, dissableBookmark }: RecipeCardP
           </div>
 
 
-          {/* Kategorija iznad overlaya */}
           <div className="absolute bottom-3 left-3 z-30 cursor-default">
             {recipe.category && (
               <Badge variant="secondary" className="bg-white/90 text-gray-800 capitalize text-xs">
@@ -124,7 +119,6 @@ export function RecipeCard({ recipe, onBookmark, dissableBookmark }: RecipeCardP
         </CardHeader>
 
         <CardContent className="space-y-4 flex-1 flex flex-col">
-          {/* Recipe Meta */}
           <div className="flex items-center justify-between text-sm text-gray-600 cursor-default">
             <div className="flex items-center gap-3 flex-wrap">
               {recipe.calories && recipe.calories !== null && (
@@ -154,7 +148,6 @@ export function RecipeCard({ recipe, onBookmark, dissableBookmark }: RecipeCardP
             </div>
           </div>
 
-          {/* Ingredients Preview */}
           <div className="space-y-2 flex-1 cursor-default">
             <h4 className="font-medium text-gray-900 text-sm">Key Ingredients:</h4>
             <div className="flex flex-wrap gap-1">
@@ -171,7 +164,6 @@ export function RecipeCard({ recipe, onBookmark, dissableBookmark }: RecipeCardP
             </div>
           </div>
 
-          {/* Actions */}
           <div className="flex items-center justify-between pt-2 mt-auto">
             <span className="text-xs text-gray-500 truncate pr-2 cursor-default">{formatDate(recipe.created_at)}</span>
             <Link href={`/recipe/${recipe.id}`}>
@@ -185,7 +177,6 @@ export function RecipeCard({ recipe, onBookmark, dissableBookmark }: RecipeCardP
         </CardContent>
       </Card>
 
-      {/* Recipe Modal */}
       <RecipeModal recipe={recipe} isOpen={showModal} onClose={() => setShowModal(false)} />
     </>
   )

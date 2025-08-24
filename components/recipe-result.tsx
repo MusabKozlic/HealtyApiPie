@@ -27,17 +27,15 @@ export function RecipeResult({ recipe }: RecipeResultProps) {
           url: window.location.href,
         })
       } catch (err) {
-        // Fallback to copying to clipboard
         navigator.clipboard.writeText(window.location.href)
       }
     } else {
-      // Fallback to copying to clipboard
       navigator.clipboard.writeText(window.location.href)
     }
   }
 
   const handleBookmark = async () => {
-    if (bookmarkLoading) return // prevent spam
+    if (bookmarkLoading) return
     setBookmarkLoading(true)
 
     try {
@@ -101,7 +99,6 @@ export function RecipeResult({ recipe }: RecipeResultProps) {
           </div>
         </div>
 
-        {/* Recipe Meta Info */}
         <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-4 pt-4 border-t border-gray-100">
           {recipe.calories && recipe.calories != null && (
             <div className="flex items-center gap-1 text-sm text-gray-600">
@@ -136,7 +133,6 @@ export function RecipeResult({ recipe }: RecipeResultProps) {
       </CardHeader>
 
       <CardContent className="space-y-6 sm:space-y-8">
-        {/* Ingredients */}
         <div>
           <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-900">Ingredients</h3>
           <ul className="grid grid-cols-1 lg:grid-cols-2 gap-2">
@@ -155,7 +151,6 @@ export function RecipeResult({ recipe }: RecipeResultProps) {
           </ul>
         </div>
 
-        {/* Instructions */}
         <div>
           <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-900">Instructions</h3>
           <ol className="space-y-3">
@@ -168,7 +163,6 @@ export function RecipeResult({ recipe }: RecipeResultProps) {
           </ol>
         </div>
 
-        {/* Nutrition Info */}
         {recipe.nutrition && (
           <div>
             <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-900">Nutrition Information</h3>

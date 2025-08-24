@@ -2,14 +2,12 @@ import type React from "react"
 import type { Metadata } from "next"
 import { AR_One_Sans, Roboto } from "next/font/google"
 import "./globals.css"
-import { User } from "lucide-react"
 import { UserProvider } from "@/context/UserContext"
-import { Footer } from "@/components/footer"
 
 const arOneSans = AR_One_Sans({
   subsets: ["latin"],
-  display: "swap",   // optimizacija za FCP
-  variable: "--font-ar-one-sans", // CSS varijabla
+  display: "swap",
+  variable: "--font-ar-one-sans",
 })
 
 const roboto = Roboto({

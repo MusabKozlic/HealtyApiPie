@@ -9,7 +9,7 @@ export type User = {
   id: string
   name?: string | null
   email?: string | null
-  roles: string[] // roles for authorization management
+  roles: string[]
   avatar?: string | null
   created_at?: string | null
 }

@@ -4,7 +4,6 @@ import type { MetadataRoute } from "next"
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createServerClient()
 
-  // Get all recipes for sitemap
   const { data: recipes } = await supabase
     .from("recipes")
     .select("id, updated_at")

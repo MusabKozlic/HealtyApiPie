@@ -10,7 +10,6 @@ export async function GET() {
     response_type: "code",
     scope: "openid profile email",
     redirect_uri: redirectUri,
-    // tell Auth0 to show sign up
     screen_hint: "signup",
   })
 

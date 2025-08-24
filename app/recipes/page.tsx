@@ -30,14 +30,11 @@ export const metadata: Metadata = {
   },
 }
 
-type DbRecipe = Omit<Recipe, "isSaved">
-type RowWithSaved = DbRecipe & { saved?: { isSaved: boolean }[] | null }
 
 async function getInitialRecipes(): Promise<Recipe[]> {
   const supabase = createServerClient()
   const userId = await getServerUserId()
 
-  // 1. Povuci recepte
   const { data: recipes, error } = await supabase
     .from("recipes")
     .select(`
@@ -52,10 +49,8 @@ async function getInitialRecipes(): Promise<Recipe[]> {
     return []
   }
 
-  // 2. Ako nema usera, vrati samo recepte
   if (!userId) return recipes
 
-  // 3. Povuci saved recepte za ovog usera
   const { data: saved, error: savedErr } = await supabase
     .from("user_saved_recipes")
     .select("recipe_id, isSaved")
@@ -67,7 +62,6 @@ async function getInitialRecipes(): Promise<Recipe[]> {
 
   const savedMap = new Map(saved?.map((s) => [s.recipe_id, s.isSaved]))
 
-  // 4. Merge recepata i saved statusa
   return recipes.map((r) => ({
     ...r,
     isSaved: savedMap.get(r.id) ?? false,
@@ -118,7 +112,6 @@ export default async function RecipesPage() {
         <Navigation />
         <main className="container mx-auto px-4 py-8">
           <div className="max-w-7xl mx-auto">
-            {/* Header with SEO-optimized content */}
             <div className="text-center mb-8">
               <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
                 Healthy Recipe Collection

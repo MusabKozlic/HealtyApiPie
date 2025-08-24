@@ -8,7 +8,6 @@ export async function POST(req: Request, { params }: { params: { recipeId: strin
         const cookieHeader = req.headers.get("cookie")
         if (!cookieHeader) return NextResponse.json({ error: "No cookies found" }, { status: 401 })
 
-        // Pronađi cookie po imenu, npr. "user"
         const match = cookieHeader.match(/user=([^;]+)/)
         if (!match) return NextResponse.json({ error: "User cookie not found" }, { status: 401 })
 

@@ -86,7 +86,6 @@ export default async function RecipePage({ params }: RecipePageProps) {
         <Navigation />
         <main className="container mx-auto px-4 py-8">
           <div className="max-w-4xl mx-auto">
-            {/* Breadcrumb */}
             <nav className="mb-6 text-sm text-gray-600">
               <ol className="flex items-center space-x-2">
                 <li>
@@ -107,7 +106,6 @@ export default async function RecipePage({ params }: RecipePageProps) {
 
             <RecipeResult recipe={recipe} />
 
-            {/* Recipe Schema.org structured data is included via RecipeStructuredData component */}
           </div>
         </main>
       </div>

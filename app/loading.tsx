@@ -1,4 +1,3 @@
-// app/loading.tsx
 "use client"
 
 import { ChefHat } from "lucide-react"
@@ -7,7 +6,6 @@ import { motion } from "framer-motion"
 export default function Loading() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-white to-green-50">
-      {/* Animated logo */}
       <motion.div
         initial={{ rotate: 0, scale: 0.8, opacity: 0 }}
         animate={{ rotate: 360, scale: 1, opacity: 1 }}
@@ -17,7 +15,6 @@ export default function Loading() {
         <ChefHat className="h-16 w-16 text-green-600" />
       </motion.div>
 
-      {/* Loading text */}
       <motion.h2
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -27,7 +24,6 @@ export default function Loading() {
         Cooking something delicious...
       </motion.h2>
 
-      {/* Subtext with subtle fade-in */}
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

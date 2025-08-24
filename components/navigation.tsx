@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Menu, X, ChefHat } from "lucide-react"
+import { Menu, X } from "lucide-react"
 import { DbUser } from "@/lib/types/DBUser"
 
 export function Navigation() {
@@ -18,7 +18,6 @@ export function Navigation() {
       .then((data) => setUser(data.user))
   }, [])
 
-  // close menus when clicked outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -38,7 +37,6 @@ export function Navigation() {
     <nav className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-2 font-bold text-xl text-gray-900 dark:text-gray-100">
             <img
               src="/nutriAIGenie.png"
@@ -48,12 +46,10 @@ export function Navigation() {
             Nutri AI Genius
           </Link>
 
-          {/* Mobile toggle button */}
           <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
 
-          {/* Menu links */}
           <div
             ref={dropdownRef}
             className={`${isMenuOpen ? "block" : "hidden"} absolute top-16 left-0 w-full bg-white dark:bg-gray-900 border-t dark:border-gray-800 md:static md:block md:w-auto md:border-0`}
@@ -76,7 +72,6 @@ export function Navigation() {
 
               {user ? (
                 <div className="relative">
-                  {/* Trigger button */}
                   <button
                     className="flex items-center gap-2 focus:outline-none"
                     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
@@ -89,7 +84,6 @@ export function Navigation() {
                     <span className="text-gray-700 dark:text-gray-300">{user.name}</span>
                   </button>
 
-                  {/* Dropdown for desktop */}
                   {isProfileMenuOpen && (
                     <div className="hidden md:absolute md:right-0 md:mt-2 md:w-48 md:bg-white md:dark:bg-gray-800 md:border md:dark:border-gray-700 md:rounded-lg md:shadow-lg md:block">
                       <Link
@@ -108,7 +102,6 @@ export function Navigation() {
                     </div>
                   )}
 
-                  {/* Mobile options always visible inside menu */}
                   <div className="flex flex-col md:hidden gap-2 mt-2">
                     <Link
                       href={`/profile/${user.id}`}

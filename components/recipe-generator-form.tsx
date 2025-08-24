@@ -23,7 +23,7 @@ export function RecipeGeneratorForm() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedRecipe, setGeneratedRecipe] = useState<Recipe | null>(null)
   const [error, setError] = useState("")
-  const recipeRef = useRef<HTMLDivElement>(null) // Ref for scrolling to the recipe
+  const recipeRef = useRef<HTMLDivElement>(null)
   const [user, setUser] = useState<DbUser | null>(null)
 
 
@@ -63,7 +63,6 @@ export function RecipeGeneratorForm() {
       const category = selectedDietary.length > 0 ? selectedDietary.join(", ") : "general"
       const cuisine = selectedCuisine || "any"
 
-      // Build ingredients string - if empty, use dietary/cuisine for random generation
       const ingredientsText = ingredients.trim() || `${category} ${cuisine} meal`
 
       const response = await fetch("/api/generate-recipe", {
@@ -91,7 +90,6 @@ export function RecipeGeneratorForm() {
 
       setGeneratedRecipe(data.recipe)
 
-      // Scroll to the recipe result
       setTimeout(() => {
         recipeRef.current?.scrollIntoView({ behavior: "smooth" })
       }, 100)
@@ -104,7 +102,6 @@ export function RecipeGeneratorForm() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Generate Your Recipe</h1>
         <p className="text-lg text-gray-600">
@@ -112,7 +109,6 @@ export function RecipeGeneratorForm() {
         </p>
       </div>
 
-      {/* Input Form */}
       <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-2xl">
@@ -121,7 +117,6 @@ export function RecipeGeneratorForm() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Ingredients Input */}
           <div className="space-y-2">
             <label htmlFor="ingredients" className="text-sm font-medium text-gray-700">
               Available Ingredients
@@ -174,7 +169,6 @@ export function RecipeGeneratorForm() {
             </div>
           </div>
 
-          {/* Dietary Preferences */}
           <div className="space-y-3">
             <label className="text-sm font-medium text-gray-700">Dietary Preferences</label>
             <div className="flex flex-wrap gap-2">
@@ -194,7 +188,6 @@ export function RecipeGeneratorForm() {
             </div>
           </div>
 
-          {/* Cuisine Type */}
           <div className="space-y-3">
             <label className="text-sm font-medium text-gray-700">Cuisine Type</label>
             <div className="flex flex-wrap gap-2">
@@ -214,7 +207,6 @@ export function RecipeGeneratorForm() {
             </div>
           </div>
 
-          {/* Generate Button */}
           <Button
             onClick={handleGenerate}
             disabled={isGenerating || !hasValidInput()}
@@ -237,12 +229,10 @@ export function RecipeGeneratorForm() {
             At least one parameter is required to generate a recipe. Leave ingredients empty for random healthy meals.
           </p>
 
-          {/* Error Message */}
           {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">{error}</div>}
         </CardContent>
       </Card>
 
-      {/* Recipe Result */}
       {generatedRecipe && (
         <div ref={recipeRef}>
           <RecipeResult recipe={generatedRecipe} />

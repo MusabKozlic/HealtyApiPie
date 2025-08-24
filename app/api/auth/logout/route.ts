@@ -11,6 +11,6 @@ export async function GET(request: Request) {
   })
 
   const res = NextResponse.redirect(`${logoutUrl}?${params.toString()}`)
-  res.cookies.delete("user") // Delete the user cookie
+  res.cookies.delete("user")
   return res
 }

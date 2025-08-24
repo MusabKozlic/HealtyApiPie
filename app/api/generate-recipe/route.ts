@@ -150,7 +150,6 @@ CRITICAL REQUIREMENTS:
       throw new Error("AI returned empty content")
     }
 
-    // Parse the AI response
     let recipeData: AIRecipeResponse
     try {
       const sanitized = sanitizeAIResponse(recipeContent)
@@ -165,8 +164,6 @@ CRITICAL REQUIREMENTS:
       return NextResponse.json(recipeData, { status: 400 })
     }
 
-    // Generate recipe image
-    // Generate recipe image using AI/ML API
     let imageUrl: string | null = null
     try {
       const imagePrompt = `
@@ -206,7 +203,6 @@ CRITICAL REQUIREMENTS:
 
         const fileName = `recipes/${safeTitle}_${Date.now()}.png`
 
-        // Upload to Supabase Storage
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from("recipes")
           .upload(fileName, Buffer.from(imageBuffer), {
@@ -241,7 +237,7 @@ CRITICAL REQUIREMENTS:
         cookingTime: recipeData.cookingTime,
         servings: recipeData.servings,
         category,
-        language: "en", // Always English now
+        language: "en",
         imageurl: recipeData.imageUrl || null,
         created_by: userId,
       })
@@ -263,29 +259,23 @@ CRITICAL REQUIREMENTS:
   }
 }
 
-// Utility to fix common JSON issues from LLMs
 function sanitizeAIResponse(response: string): string {
   let fixed = response.trim()
 
-  // Remove markdown code block wrappers if present
   if (fixed.startsWith("```")) {
     fixed = fixed.replace(/```(json)?/g, "").trim()
   }
 
-  // Fix unquoted unit values like: protein: 45 g → protein: "45g"
   fixed = fixed.replace(/:\s*(\d+)\s*(g|mg|kcal)(?=[,\s}])/gi, ': "$1$2"')
 
-  // Ensure object keys are quoted properly
   fixed = fixed.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":')
 
-  // Remove trailing commas that break JSON
   fixed = fixed.replace(/,(\s*[}\]])/g, "$1")
 
   return fixed
 }
 
 function normalizeRecipe(data: any): AIRecipeResponse {
-  // Normalize instructions
   let instructions: string[] = []
   if (Array.isArray(data.instructions)) {
     instructions = data.instructions.map((step: string, i: number) =>

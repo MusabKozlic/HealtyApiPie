@@ -17,9 +17,9 @@ export function RecipeStructuredData({ recipe }: RecipeStructuredDataProps) {
     },
     datePublished: recipe.created_at,
     dateModified: recipe.updated_at,
-    prepTime: "PT30M", // 30 minutes prep time
-    cookTime: "PT30M", // 30 minutes cook time
-    totalTime: "PT60M", // 1 hour total
+    prepTime: "PT30M",
+    cookTime: "PT30M",
+    totalTime: "PT60M",
     recipeCategory: recipe.category || "Main Course",
     recipeCuisine: "Healthy",
     recipeYield: "2-4 servings",
@@ -29,7 +29,7 @@ export function RecipeStructuredData({ recipe }: RecipeStructuredDataProps) {
     recipeIngredient: recipe.ingredients,
     recipeInstructions: recipe.instructions.map((step: string, index: number) => ({
       "@type": "HowToStep",
-      text: step.replace(/^Step \d+:\s*/, ""), // remove "Step 1:" prefix if exists
+      text: step.replace(/^Step \d+:\s*/, ""),
     })),
     nutrition: recipe.nutrition
       ? {
@@ -46,7 +46,7 @@ export function RecipeStructuredData({ recipe }: RecipeStructuredDataProps) {
       ratingValue: "4.8",
       reviewCount: "127",
     },
-    video: undefined, // Could be added later if video content is available
+    video: undefined,
   }
 
   return (

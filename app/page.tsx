@@ -45,7 +45,6 @@ export default function HomePage() {
         <main className="container mx-auto px-4 py-8">
           <div className="max-w-4xl mx-auto">
             <div className="space-y-8">
-              {/* Hero Section */}
               <div className="text-center mb-12">
                 <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
                   Healthy Recipe Generator
@@ -73,7 +72,6 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Features Section */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
                 <Card className="text-center p-6 border-0 bg-white/50">
                   <Clock className="h-8 w-8 text-green-600 mx-auto mb-3" />

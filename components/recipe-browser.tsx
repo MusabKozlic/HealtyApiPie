@@ -83,12 +83,10 @@ export function RecipeBrowser({ initialRecipes }: RecipeBrowserProps) {
     }
   }
 
-  // Initial load
   useEffect(() => {
     fetchRecipes(1, true)
   }, [selectedDietaryCategory, selectedCuisineCategory])
 
-  // Search with debounce
   useEffect(() => {
     const timer = setTimeout(() => {
       setCurrentPage(1)
@@ -110,7 +108,6 @@ export function RecipeBrowser({ initialRecipes }: RecipeBrowserProps) {
 
   return (
     <div className="space-y-6">
-      {/* Search and Filters */}
       <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
@@ -119,7 +116,6 @@ export function RecipeBrowser({ initialRecipes }: RecipeBrowserProps) {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Search Bar */}
           <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -135,9 +131,7 @@ export function RecipeBrowser({ initialRecipes }: RecipeBrowserProps) {
             </Button>
           </form>
 
-          {/* Filters */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Dietary Category Filter */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">Dietary Preferences</label>
               <Select value={selectedDietaryCategory} onValueChange={setSelectedDietaryCategory}>
@@ -155,7 +149,6 @@ export function RecipeBrowser({ initialRecipes }: RecipeBrowserProps) {
               </Select>
             </div>
 
-            {/* Cuisine Category Filter */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">Cuisine</label>
               <Select value={selectedCuisineCategory} onValueChange={setSelectedCuisineCategory}>
@@ -176,14 +169,12 @@ export function RecipeBrowser({ initialRecipes }: RecipeBrowserProps) {
         </CardContent>
       </Card>
 
-      {/* Error Message */}
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm sm:text-base">
           {error}
         </div>
       )}
 
-      {/* Recipe Grid */}
       {recipes.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {recipes.map((recipe) => (
@@ -204,7 +195,6 @@ export function RecipeBrowser({ initialRecipes }: RecipeBrowserProps) {
         )
       )}
 
-      {/* Load More Button */}
       {hasMore && recipes.length > 0 && (
         <div className="text-center">
           <Button
@@ -228,7 +218,6 @@ export function RecipeBrowser({ initialRecipes }: RecipeBrowserProps) {
         </div>
       )}
 
-      {/* Recipe Count */}
       {recipes.length > 0 && (
         <div className="text-center text-sm text-gray-600">
           Showing {recipes.length} recipe{recipes.length !== 1 ? "s" : ""}

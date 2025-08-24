@@ -1,9 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import Link from "next/link"
 import { Navigation } from "@/components/navigation"
-import { RecipeCard } from "@/components/recipe-card"
 import { Recipe } from "@/lib/supabase/client"
 import { Footer } from "@/components/footer"
 import { RecipeGrid } from "@/components/recipe-grid"
@@ -41,14 +38,12 @@ export default async function ProfilePage({ params }: { params: { id: string } }
   const supabase = createServerClient()
   const { id: userId } = await params;
 
-  // Fetch user
   const { data: user } = await supabase
     .from("auth_users")
     .select("id, name, picture")
     .eq("id", userId)
     .single()
 
-  // Fetch saved/bookmarked recipes by this user
   const { data: saved } = await supabase
     .from("user_saved_recipes")
     .select("recipe_id")

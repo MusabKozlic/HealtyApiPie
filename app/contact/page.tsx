@@ -1,4 +1,3 @@
-// app/contact/page.tsx
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import ContactForm from "./ContactForm"
@@ -17,7 +16,6 @@ export default async function ContactPage() {
             Have questions or want to get in touch? Fill out the fields below and click Send Email to contact us directly.
           </p>
 
-          {/* Emails */}
           <div className="flex flex-col md:flex-row justify-around mb-12 gap-6">
             <div className="bg-white/80 p-6 rounded-xl shadow-md text-center">
               <h3 className="font-semibold text-gray-800">Musab Kozlić</h3>

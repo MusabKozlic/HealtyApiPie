@@ -1,4 +1,3 @@
-// components/ui/label.tsx
 import React, { ReactNode } from "react"
 
 interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {

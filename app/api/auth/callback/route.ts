@@ -20,7 +20,6 @@ export async function GET(request: Request) {
   const userInfoUrl = `${process.env.AUTH0_ISSUER_BASE_URL}/userinfo`
   const redirectUri = `${process.env.AUTH0_BASE_URL}/api/auth/callback`
 
-  // Exchange authorization code for tokens
   const tokenResponse = await fetch(tokenUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -39,7 +38,6 @@ export async function GET(request: Request) {
 
   const { access_token } = await tokenResponse.json()
 
-  // Fetch user info
   const userResponse = await fetch(userInfoUrl, {
     headers: { Authorization: `Bearer ${access_token}` },
   })
@@ -73,7 +71,7 @@ export async function GET(request: Request) {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7,
     }
   )
 
