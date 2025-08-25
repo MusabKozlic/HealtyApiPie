@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { AR_One_Sans, Roboto } from "next/font/google"
 import "./globals.css"
 import { UserProvider } from "@/context/UserContext"
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const arOneSans = AR_One_Sans({
   subsets: ["latin"],
@@ -35,6 +36,7 @@ export default function RootLayout({
         <UserProvider>
           {children}
         </UserProvider>
+        <SpeedInsights />
       </body>
     </html>
   )
